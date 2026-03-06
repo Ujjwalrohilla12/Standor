@@ -1,5 +1,6 @@
 import { Code2Icon, LoaderIcon, PlusIcon } from "lucide-react";
 import { PROBLEMS } from "../data/problems";
+import { motion, AnimatePresence } from "framer-motion";
 
 function CreateSessionModal({
   isOpen,
@@ -11,11 +12,17 @@ function CreateSessionModal({
 }) {
   const problems = Object.values(PROBLEMS);
 
-  if (!isOpen) return null;
-
   return (
+    <AnimatePresence>
+      {isOpen && (
     <div className="modal modal-open">
-      <div className="modal-box max-w-2xl">
+      <motion.div
+        className="modal-box max-w-2xl"
+        initial={{ opacity: 0, scale: 0.9, y: -20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: -20 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+      >
         <h3 className="font-bold text-2xl mb-6">Create New Session</h3>
 
         <div className="space-y-8">
@@ -85,9 +92,11 @@ function CreateSessionModal({
             {isCreating ? "Creating..." : "Create"}
           </button>
         </div>
-      </div>
+      </motion.div>
       <div className="modal-backdrop" onClick={onClose}></div>
     </div>
+      )}
+    </AnimatePresence>
   );
 }
 export default CreateSessionModal;

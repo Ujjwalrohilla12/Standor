@@ -1,5 +1,23 @@
 import mongoose from "mongoose";
 
+const codeSnapshotSchema = new mongoose.Schema({
+  content: { type: String, required: true },
+  language: { type: String, required: true },
+  timestamp: { type: Date, default: Date.now },
+});
+
+const aiAnalysisSchema = new mongoose.Schema({
+  timeComplexity: String,
+  spaceComplexity: String,
+  correctness: String,
+  bugs: [String],
+  suggestions: [String],
+  codeStyle: String,
+  overallScore: Number,
+  summary: String,
+  analyzedAt: { type: Date, default: Date.now },
+});
+
 const sessionSchema = new mongoose.Schema(
   {
     problem: {
@@ -26,10 +44,14 @@ const sessionSchema = new mongoose.Schema(
       enum: ["active", "completed"],
       default: "active",
     },
-    // stream video call ID
     callId: {
       type: String,
       default: "",
+    },
+    codeSnapshots: [codeSnapshotSchema],
+    aiAnalysis: {
+      type: aiAnalysisSchema,
+      default: null,
     },
   },
   { timestamps: true }

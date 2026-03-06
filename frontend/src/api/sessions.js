@@ -33,3 +33,24 @@ export const sessionApi = {
     return response.data;
   },
 };
+// AI analysis
+sessionApi.analyzeCode = async (id, data) => {
+  const response = await axiosInstance.post(`/sessions/${id}/analyze`, data);
+  return response.data;
+};
+
+sessionApi.getAnalysis = async (id) => {
+  const response = await axiosInstance.get(`/sessions/${id}/analysis`);
+  return response.data;
+};
+
+// Code snapshots
+sessionApi.saveSnapshot = async (id, data) => {
+  const response = await axiosInstance.post(`/sessions/${id}/snapshot`, data);
+  return response.data;
+};
+
+sessionApi.getSnapshots = async (id) => {
+  const response = await axiosInstance.get(`/sessions/${id}/snapshots`);
+  return response.data;
+};

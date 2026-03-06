@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import { PROBLEMS } from "../data/problems";
 import { ChevronRightIcon, Code2Icon } from "lucide-react";
 import { getDifficultyBadgeClass } from "../lib/utils";
+import { motion } from "framer-motion";
 
 function ProblemsPage() {
   const problems = Object.values(PROBLEMS);
@@ -18,55 +19,72 @@ function ProblemsPage() {
 
       <div className="max-w-6xl mx-auto px-4 py-12">
         {/* HEADER */}
-        <div className="mb-8">
+        <motion.div
+          className="mb-8"
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
           <h1 className="text-4xl font-bold mb-2">Practice Problems</h1>
           <p className="text-base-content/70">
             Sharpen your coding skills with these curated problems
           </p>
-        </div>
+        </motion.div>
 
         {/* PROBLEMS LIST */}
         <div className="space-y-4">
-          {problems.map((problem) => (
-            <Link
+          {problems.map((problem, i) => (
+            <motion.div
               key={problem.id}
-              to={`/problem/${problem.id}`}
-              className="card bg-base-100 hover:scale-[1.01] transition-transform"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.35, delay: i * 0.06 }}
             >
-              <div className="card-body">
-                <div className="flex items-center justify-between gap-4">
-                  {/* LEFT SIDE */}
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="size-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <Code2Icon className="size-6 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h2 className="text-xl font-bold">{problem.title}</h2>
-                          <span className={`badge ${getDifficultyBadgeClass(problem.difficulty)}`}>
-                            {problem.difficulty}
-                          </span>
+              <Link
+                to={`/problem/${problem.id}`}
+                className="card bg-base-100 hover:scale-[1.01] transition-transform block"
+              >
+                <div className="card-body">
+                  <div className="flex items-center justify-between gap-4">
+                    {/* LEFT SIDE */}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="size-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <Code2Icon className="size-6 text-primary" />
                         </div>
-                        <p className="text-sm text-base-content/60"> {problem.category}</p>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h2 className="text-xl font-bold">{problem.title}</h2>
+                            <span className={`badge ${getDifficultyBadgeClass(problem.difficulty)}`}>
+                              {problem.difficulty}
+                            </span>
+                          </div>
+                          <p className="text-sm text-base-content/60"> {problem.category}</p>
+                        </div>
                       </div>
+                      <p className="text-base-content/80 mb-3">{problem.description.text}</p>
                     </div>
-                    <p className="text-base-content/80 mb-3">{problem.description.text}</p>
-                  </div>
-                  {/* RIGHT SIDE */}
+                    {/* RIGHT SIDE */}
 
-                  <div className="flex items-center gap-2 text-primary">
-                    <span className="font-medium">Solve</span>
-                    <ChevronRightIcon className="size-5" />
+                    <div className="flex items-center gap-2 text-primary">
+                      <span className="font-medium">Solve</span>
+                      <ChevronRightIcon className="size-5" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </motion.div>
           ))}
         </div>
 
         {/* STATS FOOTER */}
-        <div className="mt-12 card bg-base-100 shadow-lg">
+        <motion.div
+          className="mt-12 card bg-base-100 shadow-lg"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          viewport={{ once: true }}
+        >
           <div className="card-body">
             <div className="stats stats-vertical lg:stats-horizontal">
               <div className="stat">
@@ -88,7 +106,7 @@ function ProblemsPage() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

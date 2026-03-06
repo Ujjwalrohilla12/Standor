@@ -1,10 +1,16 @@
 import { Code2, Clock, Users, Trophy, Loader } from "lucide-react";
 import { getDifficultyBadgeClass } from "../lib/utils";
 import { formatDistanceToNow } from "date-fns";
+import { motion } from "framer-motion";
 
 function RecentSessions({ sessions, isLoading }) {
   return (
-    <div className="card bg-base-100 border-2 border-accent/20 hover:border-accent/30 mt-8">
+    <motion.div
+      className="card bg-base-100 border-2 border-accent/20 hover:border-accent/30 mt-8"
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, delay: 0.2, ease: "easeOut" }}
+    >
       <div className="card-body">
         <div className="flex items-center gap-3 mb-6">
           <div className="p-2 bg-gradient-to-br from-accent to-secondary rounded-xl">
@@ -19,14 +25,18 @@ function RecentSessions({ sessions, isLoading }) {
               <Loader className="w-10 h-10 animate-spin text-primary" />
             </div>
           ) : sessions.length > 0 ? (
-            sessions.map((session) => (
-              <div
+            sessions.map((session, i) => (
+              <motion.div
                 key={session._id}
                 className={`card relative ${
                   session.status === "active"
                     ? "bg-success/10 border-success/30 hover:border-success/60"
                     : "bg-base-200 border-base-300 hover:border-primary/30"
                 }`}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: i * 0.08 }}
+                whileHover={{ y: -3 }}
               >
                 {session.status === "active" && (
                   <div className="absolute top-3 right-3">
@@ -83,7 +93,7 @@ function RecentSessions({ sessions, isLoading }) {
                     </span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))
           ) : (
             <div className="col-span-full text-center py-16">
@@ -96,7 +106,7 @@ function RecentSessions({ sessions, isLoading }) {
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

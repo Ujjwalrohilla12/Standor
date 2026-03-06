@@ -1,5 +1,5 @@
-import { useUser } from "@clerk/clerk-react";
-import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useEndSession, useJoinSession, useSessionById } from "../hooks/useSession";
 import { PROBLEMS } from "../data/problems";
@@ -10,15 +10,19 @@ import { getDifficultyBadgeClass } from "../lib/utils";
 import { Loader2Icon, LogOutIcon, PhoneOffIcon } from "lucide-react";
 import CodeEditorPanel from "../components/CodeEditorPanel";
 import OutputPanel from "../components/OutputPanel";
+import AIAnalysisPanel from "../components/AIAnalysisPanel";
 
 import useStreamClient from "../hooks/useStreamClient";
 import { StreamCall, StreamVideo } from "@stream-io/video-react-sdk";
 import VideoCallUI from "../components/VideoCallUI";
+import { useSaveSnapshot } from "../hooks/useAiAnalysis";
+
+const SNAPSHOT_INTERVAL_MS = 30_000;
 
 function SessionPage() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { user } = useUser();
+  const { user } = useAuth();
   const [output, setOutput] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
 
@@ -26,10 +30,11 @@ function SessionPage() {
 
   const joinSessionMutation = useJoinSession();
   const endSessionMutation = useEndSession();
+  const saveSnapshotMutation = useSaveSnapshot(id);
 
   const session = sessionData?.session;
-  const isHost = session?.host?.clerkId === user?.id;
-  const isParticipant = session?.participant?.clerkId === user?.id;
+  const isHost = session?.host?._id === user?._id;
+  const isParticipant = session?.participant?._id === user?._id;
 
   const { call, channel, chatClient, isInitializingCall, streamClient } = useStreamClient(
     session,
@@ -47,6 +52,12 @@ function SessionPage() {
   const starterCode = problemData?.starterCode?.[selectedLanguage] || "";
   const [code, setCode] = useState(starterCode);
   const [prevStarterCode, setPrevStarterCode] = useState(starterCode);
+
+  // refs for snapshot interval (always latest values)
+  const codeRef = useRef(code);
+  const languageRef = useRef(selectedLanguage);
+  useEffect(() => { codeRef.current = code; }, [code]);
+  useEffect(() => { languageRef.current = selectedLanguage; }, [selectedLanguage]);
 
   // update code when problem or language changes
   if (starterCode !== prevStarterCode) {
@@ -66,9 +77,20 @@ function SessionPage() {
   // redirect the "participant" when session ends
   useEffect(() => {
     if (!session || loadingSession) return;
-
     if (session.status === "completed") navigate("/dashboard");
   }, [session, loadingSession, navigate]);
+
+  // periodic code snapshot every 30 seconds
+  useEffect(() => {
+    if (!session || session.status !== "active") return;
+    const timer = setInterval(() => {
+      const currentCode = codeRef.current?.trim();
+      if (!currentCode) return;
+      saveSnapshotMutation.mutate({ content: currentCode, language: languageRef.current });
+    }, SNAPSHOT_INTERVAL_MS);
+    return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, session?.status]);
 
   const handleLanguageChange = (e) => {
     const newLang = e.target.value;
@@ -254,38 +276,57 @@ function SessionPage() {
 
           <PanelResizeHandle className="w-2 bg-base-300 hover:bg-primary transition-colors cursor-col-resize" />
 
-          {/* RIGHT PANEL - VIDEO CALLS & CHAT */}
+          {/* RIGHT PANEL - VIDEO CALLS, CHAT & AI ANALYSIS */}
           <Panel defaultSize={50} minSize={30}>
-            <div className="h-full bg-base-200 p-4 overflow-auto">
-              {isInitializingCall ? (
-                <div className="h-full flex items-center justify-center">
-                  <div className="text-center">
-                    <Loader2Icon className="w-12 h-12 mx-auto animate-spin text-primary mb-4" />
-                    <p className="text-lg">Connecting to video call...</p>
-                  </div>
-                </div>
-              ) : !streamClient || !call ? (
-                <div className="h-full flex items-center justify-center">
-                  <div className="card bg-base-100 shadow-xl max-w-md">
-                    <div className="card-body items-center text-center">
-                      <div className="w-24 h-24 bg-error/10 rounded-full flex items-center justify-center mb-4">
-                        <PhoneOffIcon className="w-12 h-12 text-error" />
+            <PanelGroup direction="vertical">
+              {/* VIDEO & CHAT */}
+              <Panel defaultSize={65} minSize={40}>
+                <div className="h-full bg-base-200 p-4 overflow-auto">
+                  {isInitializingCall ? (
+                    <div className="h-full flex items-center justify-center">
+                      <div className="text-center">
+                        <Loader2Icon className="w-12 h-12 mx-auto animate-spin text-primary mb-4" />
+                        <p className="text-lg">Connecting to video call...</p>
                       </div>
-                      <h2 className="card-title text-2xl">Connection Failed</h2>
-                      <p className="text-base-content/70">Unable to connect to the video call</p>
                     </div>
-                  </div>
+                  ) : !streamClient || !call ? (
+                    <div className="h-full flex items-center justify-center">
+                      <div className="card bg-base-100 shadow-xl max-w-md">
+                        <div className="card-body items-center text-center">
+                          <div className="w-24 h-24 bg-error/10 rounded-full flex items-center justify-center mb-4">
+                            <PhoneOffIcon className="w-12 h-12 text-error" />
+                          </div>
+                          <h2 className="card-title text-2xl">Connection Failed</h2>
+                          <p className="text-base-content/70">Unable to connect to the video call</p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="h-full">
+                      <StreamVideo client={streamClient}>
+                        <StreamCall call={call}>
+                          <VideoCallUI chatClient={chatClient} channel={channel} />
+                        </StreamCall>
+                      </StreamVideo>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="h-full">
-                  <StreamVideo client={streamClient}>
-                    <StreamCall call={call}>
-                      <VideoCallUI chatClient={chatClient} channel={channel} />
-                    </StreamCall>
-                  </StreamVideo>
+              </Panel>
+
+              <PanelResizeHandle className="h-2 bg-base-300 hover:bg-primary transition-colors cursor-row-resize" />
+
+              {/* AI ANALYSIS PANEL */}
+              <Panel defaultSize={35} minSize={20}>
+                <div className="h-full bg-base-200 p-4 overflow-y-auto">
+                  <AIAnalysisPanel
+                    sessionId={id}
+                    code={code}
+                    language={selectedLanguage}
+                    problem={session?.problem}
+                  />
                 </div>
-              )}
-            </div>
+              </Panel>
+            </PanelGroup>
           </Panel>
         </PanelGroup>
       </div>
