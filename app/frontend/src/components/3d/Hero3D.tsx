@@ -35,7 +35,6 @@ function ParticleField({ count = 600 }: { count?: number }) {
     const t = clock.getElapsedTime();
     const pos = mesh.current.geometry.attributes['position']!.array as Float32Array;
     for (let i = 0; i < count; i++) {
-      // Slowly drift particles toward center (converge effect)
       const convergence = Math.sin(t * 0.3) * 0.002;
       pos[i * 3] *= 1 - convergence * (speeds[i] ?? 0.1);
       pos[i * 3 + 1] *= 1 - convergence * (speeds[i] ?? 0.1);
@@ -49,7 +48,7 @@ function ParticleField({ count = 600 }: { count?: number }) {
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      <pointsMaterial size={0.03} color="#14b8a6" sizeAttenuation transparent opacity={0.7} />
+      <pointsMaterial size={0.03} color="#14b8a6" sizeAttenuation transparent opacity={0.6} />
     </points>
   );
 }
@@ -76,7 +75,7 @@ function CentralOrb() {
           roughness={0.15}
           metalness={0.6}
           emissive="#0d9488"
-          emissiveIntensity={0.1}
+          emissiveIntensity={0.15}
         />
       </mesh>
     </Float>
@@ -101,7 +100,7 @@ function SceneTilt({ children }: { children: React.ReactNode }) {
       (pointer.x * Math.PI) / 24,
       0.05,
     );
-    void viewport; // keep dep
+    void viewport;
   });
 
   return <group ref={groupRef}>{children}</group>;
@@ -118,12 +117,13 @@ export default function Hero3D() {
     >
       <Canvas
         camera={{ position: [0, 0, 5], fov: 55 }}
-        dpr={[1, 1.5]}  // cap pixel ratio for performance
+        dpr={[1, 1.5]}
         gl={{ antialias: true, powerPreference: 'high-performance' }}
       >
-        <ambientLight intensity={0.4} />
-        <directionalLight position={[5, 5, 5]} intensity={0.8} color="#f0fdfa" />
-        <pointLight position={[-3, -2, 2]} intensity={0.5} color="#0d9488" />
+        <color attach="background" args={['#0B0B0D']} />
+        <ambientLight intensity={0.3} />
+        <directionalLight position={[5, 5, 5]} intensity={0.6} color="#ccfbf1" />
+        <pointLight position={[-3, -2, 2]} intensity={0.6} color="#0d9488" />
 
         <SceneTilt>
           <ParticleField count={500} />
@@ -142,7 +142,7 @@ export default function Hero3D() {
 
       {/* Overlay label */}
       <div className="pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 text-center">
-        <p className="rounded-full border border-primary-200 bg-white/80 px-4 py-1 text-xs font-medium text-primary-700 backdrop-blur-sm">
+        <p className="rounded-full border border-teal-500/20 bg-bg-surface/80 px-4 py-1 text-xs font-medium text-teal-400 backdrop-blur-sm">
           Signal extraction · drag to explore
         </p>
       </div>

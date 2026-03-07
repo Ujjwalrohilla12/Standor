@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Play, Zap, Shield, Users } from 'lucide-react';
+import { ArrowRight, Play, Shield, Users, Zap } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { FeatureGrid } from '@/components/FeatureGrid';
 import { HowItWorks } from '@/components/HowItWorks';
@@ -14,7 +14,7 @@ const Hero3D = dynamic(() => import('@/components/3d/Hero3D'), {
   ssr: false,
   loading: () => (
     <div className="flex h-[480px] items-center justify-center">
-      <div className="h-64 w-64 animate-pulse rounded-full bg-primary-100" />
+      <div className="h-64 w-64 animate-pulse rounded-full bg-teal-500/10" />
     </div>
   ),
 });
@@ -31,18 +31,23 @@ const stagger = {
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-bg-base">
       <Navbar />
 
       {/* ── Hero ── */}
       <section className="relative overflow-hidden pb-24 pt-20">
-        {/* Subtle grid background */}
+        {/* Subtle dot grid */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#e2e8f008_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f008_1px,transparent_1px)] bg-[size:48px_48px]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,#26282B_1px,transparent_0)] bg-[size:32px_32px] opacity-60"
+        />
+        {/* Radial glow */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 h-[480px] w-[800px] rounded-full bg-teal-500/5 blur-3xl"
         />
 
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid items-center gap-16 lg:grid-cols-2">
             {/* Left: copy */}
             <motion.div
@@ -52,15 +57,15 @@ export default function HomePage() {
               className="max-w-xl"
             >
               <motion.div variants={fadeUp}>
-                <span className="badge-teal mb-6 inline-flex gap-1.5">
-                  <Zap className="h-3 w-3" />
+                <span className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-teal-500/20 bg-teal-500/10 px-3 py-1 text-xs font-medium text-teal-400">
+                  <Zap className="h-3 w-3" aria-hidden="true" />
                   Real-time · AI-powered · 100% free stack
                 </span>
               </motion.div>
 
               <motion.h1
                 variants={fadeUp}
-                className="text-display font-extrabold tracking-tight text-slate-900"
+                className="text-display font-extrabold tracking-tight text-text-primary"
               >
                 The standard for{' '}
                 <span className="text-gradient">technical interviews</span>
@@ -68,30 +73,30 @@ export default function HomePage() {
 
               <motion.p
                 variants={fadeUp}
-                className="mt-6 text-lg leading-8 text-slate-500"
+                className="mt-6 text-lg leading-8 text-text-secondary"
               >
                 Collaborate in Monaco editor in real-time, run code in 20+ languages,
                 get instant AI feedback, and close hires faster — all in one room.
               </motion.p>
 
               <motion.div variants={fadeUp} className="mt-10 flex flex-wrap items-center gap-4">
-                <Link href="/register" className="btn-primary text-base px-6 py-3">
+                <Link href="/register" className="btn-primary px-6 py-3 text-base">
                   Start for free
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
-                <Link href="/login" className="btn-secondary text-base px-6 py-3">
-                  <Play className="h-4 w-4" />
+                <Link href="/login" className="btn-secondary px-6 py-3 text-base">
+                  <Play className="h-4 w-4" aria-hidden="true" />
                   See a demo
                 </Link>
               </motion.div>
 
               <motion.div
                 variants={fadeUp}
-                className="mt-8 flex flex-wrap gap-5 text-sm text-slate-400"
+                className="mt-8 flex flex-wrap gap-5 text-sm text-text-tertiary"
               >
                 {['No credit card', 'Open source', 'WCAG AA'].map((t) => (
                   <span key={t} className="flex items-center gap-1.5">
-                    <Shield className="h-3.5 w-3.5 text-primary-400" />
+                    <Shield className="h-3.5 w-3.5 text-teal-500" aria-hidden="true" />
                     {t}
                   </span>
                 ))}
@@ -103,7 +108,7 @@ export default function HomePage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="relative"
+              className="relative rounded-panel overflow-hidden border border-border"
             >
               <Hero3D />
             </motion.div>
@@ -112,7 +117,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Social proof numbers ── */}
-      <section className="border-y border-slate-100 bg-slate-50 py-10">
+      <section className="border-y border-border bg-bg-surface py-10">
         <div className="mx-auto max-w-5xl px-6">
           <motion.div
             initial={{ opacity: 0 }}
@@ -127,8 +132,8 @@ export default function HomePage() {
               { label: 'AI accuracy', value: '94%' },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
-                <p className="text-2xl font-extrabold text-slate-900">{stat.value}</p>
-                <p className="mt-1 text-sm text-slate-500">{stat.label}</p>
+                <p className="text-2xl font-extrabold text-text-primary">{stat.value}</p>
+                <p className="mt-1 text-sm text-text-secondary">{stat.label}</p>
               </div>
             ))}
           </motion.div>
@@ -146,18 +151,20 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
-            className="rounded-3xl border border-primary-100 bg-gradient-to-br from-primary-50 to-white p-12 shadow-card"
+            className="card-elevated rounded-panel p-12"
           >
-            <Users className="mx-auto mb-4 h-10 w-10 text-primary-500" />
-            <h2 className="text-display-sm font-extrabold text-slate-900">
+            {/* Teal glow behind CTA card */}
+            <div aria-hidden className="pointer-events-none absolute inset-0 rounded-panel bg-teal-500/5" />
+            <Users className="mx-auto mb-4 h-10 w-10 text-teal-400" aria-hidden="true" />
+            <h2 className="text-display-sm font-extrabold text-text-primary">
               Ready to run better interviews?
             </h2>
-            <p className="mt-3 text-slate-500">
+            <p className="mt-3 text-text-secondary">
               Create your first room in 30 seconds — no setup required.
             </p>
             <div className="mt-8 flex justify-center gap-4">
               <Link href="/register" className="btn-primary px-8 py-3 text-base">
-                Get started free <ArrowRight className="h-4 w-4" />
+                Get started free <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             </div>
           </motion.div>
