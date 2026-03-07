@@ -6,3 +6,22 @@ dist
 .DS_Store
 .vscode
 *.pdf
+
+# Docs — local only
+DEPLOYMENT.md
+FEATURES.md
+PROJECT_COMPLETE.md
+QUICKSTART.md
+Untitled-1.md
+docs/
+memory/
+infra/
+.github/
+.env.example
+.prettierrc
+package.json
+package-lock.json
+pnpm-workspace.yaml
+tsconfig.base.json
+turbo.json
+a
