@@ -271,6 +271,9 @@
   .text-gradient-warm {
     @apply bg-gradient-to-r from-teal-400 via-teal-300 to-amber-400 bg-clip-text text-transparent;
   }
+  .text-gradient-amber {
+    @apply bg-gradient-to-r from-amber-300 to-amber-500 bg-clip-text text-transparent;
+  }
 
   /* ── Scrollbars ── */
   .scrollbar-hide {

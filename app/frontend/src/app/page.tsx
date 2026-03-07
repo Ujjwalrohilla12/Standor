@@ -1,31 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import {
   ArrowRight, Shield, Users, Lock, Server, Eye,
   Zap, Building2, GraduationCap, Mail
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
+import { HeroSlider } from '@/components/HeroSlider';
 import { FeatureGrid } from '@/components/FeatureGrid';
 import { HowItWorks } from '@/components/HowItWorks';
 import { Footer } from '@/components/Footer';
 import { DemoPlayer } from '@/components/DemoPlayer';
-import { HeroFallback } from '@/components/3d/HeroFallback';
-
-// Lazy-load 3D after first paint; HeroFallback is the LCP element
-const Hero3D = dynamic(() => import('@/components/3d/Hero3D'), {
-  ssr: false,
-  loading: () => <HeroFallback />,
-});
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 16 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.38, ease: [0.22, 1, 0.36, 1] } },
-};
-const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.09 } } };
 
 const TRUST_LOGOS = ['Google', 'Stripe', 'Figma', 'Linear', 'Vercel', 'Anthropic'];
 
@@ -48,79 +34,12 @@ const SECURITY_ITEMS = [
 ];
 
 export default function HomePage() {
-  const [analyzeActive, setAnalyzeActive] = useState(false);
-
-  function handleAnalyze() {
-    setAnalyzeActive(true);
-    setTimeout(() => setAnalyzeActive(false), 1800);
-  }
-
   return (
     <div className="min-h-screen bg-bg-base">
       <Navbar />
 
-      {/* ══ §1 HERO ══════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden pb-24 pt-20">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,#1F2937_1px,transparent_0)] bg-[size:28px_28px] opacity-70"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 h-[480px] w-[800px] rounded-full bg-teal-500/5 blur-3xl"
-        />
-
-        <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid items-center gap-16 lg:grid-cols-2">
-            <motion.div variants={stagger} initial="hidden" animate="show" className="max-w-xl">
-              <motion.div variants={fadeUp}>
-                <span className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-teal-500/20 bg-teal-500/10 px-3 py-1 text-xs font-medium text-teal-400">
-                  <Zap className="h-3 w-3" aria-hidden="true" />
-                  Real-time · AI-powered · Open source
-                </span>
-              </motion.div>
-
-              <motion.h1 variants={fadeUp} className="text-display font-extrabold tracking-tight text-text-primary">
-                The standard for{' '}
-                <span className="text-gradient">technical interviews</span>
-              </motion.h1>
-
-              <motion.p variants={fadeUp} className="mt-6 text-lg leading-8 text-text-secondary">
-                Collaborate in Monaco editor in real-time, run code in 20+ languages,
-                get instant AI feedback, and close hires faster — all in one room.
-              </motion.p>
-
-              <motion.div variants={fadeUp} className="mt-10 flex flex-wrap items-center gap-4">
-                <Link href="/register" className="btn-primary px-6 py-3 text-base">
-                  Start for free <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-                <button onClick={handleAnalyze} className="btn-secondary px-6 py-3 text-base">
-                  <Zap className="h-4 w-4" aria-hidden="true" />
-                  See it analyze
-                </button>
-              </motion.div>
-
-              <motion.div variants={fadeUp} className="mt-8 flex flex-wrap gap-5 text-sm text-text-tertiary">
-                {['No credit card', 'Open source', 'WCAG AA'].map((t) => (
-                  <span key={t} className="flex items-center gap-1.5">
-                    <Shield className="h-3.5 w-3.5 text-teal-500" aria-hidden="true" />
-                    {t}
-                  </span>
-                ))}
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="relative overflow-hidden rounded-panel border border-border"
-            >
-              <Hero3D analyzeActive={analyzeActive} onAnalyze={handleAnalyze} />
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      {/* ══ §1 HERO SLIDER ═══════════════════════════════════════════════ */}
+      <HeroSlider />
 
       {/* ══ §2 TRUST STRIP ═══════════════════════════════════════════════ */}
       <section className="border-y border-border bg-bg-surface py-8" aria-label="Companies we take inspiration from">
