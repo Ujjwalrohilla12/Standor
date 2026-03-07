@@ -1,6 +1,5 @@
-import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', '@react-three/drei'],
   },
@@ -11,7 +10,6 @@ const nextConfig: NextConfig = {
     ],
   },
   webpack(config) {
-    // Silence critical dependency warnings from monaco-editor
     config.module?.exprContextCritical && (config.module.exprContextCritical = false);
     return config;
   },
