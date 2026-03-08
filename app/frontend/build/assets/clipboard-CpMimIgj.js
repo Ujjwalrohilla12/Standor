@@ -1,0 +1,6 @@
+import{D as a,$ as c}from"./index-DksZfm5v.js";/**
+ * @license lucide-react v0.507.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const l=[["circle",{cx:"18",cy:"5",r:"3",key:"gq8acd"}],["circle",{cx:"6",cy:"12",r:"3",key:"w7nqdw"}],["circle",{cx:"18",cy:"19",r:"3",key:"1xt0gg"}],["line",{x1:"8.59",x2:"15.42",y1:"13.51",y2:"17.49",key:"47mynk"}],["line",{x1:"15.41",x2:"8.59",y1:"6.51",y2:"10.49",key:"1n3mei"}]],i=a("share-2",l),s=async(o,r="Copied to clipboard")=>{try{if(navigator.clipboard&&window.isSecureContext)return await navigator.clipboard.writeText(o),c.success(r),!0;{const e=document.createElement("textarea");e.value=o,e.style.position="fixed",e.style.left="-999999px",e.style.top="-999999px",document.body.appendChild(e),e.focus(),e.select();try{return document.execCommand("copy")?(c.success(r),!0):(c.error("Failed to copy natively. Please copy manually."),!1)}catch(t){return c.error("Failed to copy natively. Please copy manually."),console.error("Fallback: unable to copy",t),!1}finally{document.body.removeChild(e)}}}catch(e){return console.error("Failed to copy",e),c.error("Failed to copy link."),!1}};export{i as S,s as c};

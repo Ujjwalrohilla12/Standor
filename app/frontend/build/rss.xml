@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>NetSculpt Blog</title>
+    <link>https://netsculpt.io/blog</link>
+    <description>Engineering insights and forensic techniques from the NetSculpt team.</description>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 27 Feb 2026 00:00:00 GMT</lastBuildDate>
+    <atom:link href="https://netsculpt.io/rss.xml" rel="self" type="application/rss+xml" />
+
+    <item>
+      <title>Entropy-Based Anomaly Detection: Finding Hidden C2 Traffic</title>
+      <link>https://netsculpt.io/blog/entropy-based-anomaly-detection</link>
+      <guid isPermaLink="true">https://netsculpt.io/blog/entropy-based-anomaly-detection</guid>
+      <description>Shannon entropy is one of the most powerful — and underused — signals in network forensics. A single byte-frequency distribution can tell you whether a payload is encrypted, compressed, or random with high confidence, no signature required.</description>
+      <pubDate>Mon, 24 Feb 2026 00:00:00 GMT</pubDate>
+      <category>Forensics</category>
+      <author>team@netsculpt.io (NetSculpt Team)</author>
+    </item>
+
+    <item>
+      <title>TCP Stream Reconstruction: From Raw PCAP to Application Context</title>
+      <link>https://netsculpt.io/blog/tcp-stream-reconstruction</link>
+      <guid isPermaLink="true">https://netsculpt.io/blog/tcp-stream-reconstruction</guid>
+      <description>Reassembling a TCP session from raw packet captures is deceptively complex. Retransmissions, out-of-order delivery, RST storms, and selective acknowledgement all conspire to make naive concatenation wrong. Here is how NetSculpt handles it.</description>
+      <pubDate>Tue, 18 Feb 2026 00:00:00 GMT</pubDate>
+      <category>Engineering</category>
+      <author>team@netsculpt.io (NetSculpt Team)</author>
+    </item>
+
+    <item>
+      <title>CRDTs for Collaborative Forensics: Real-Time Annotation Without Conflicts</title>
+      <link>https://netsculpt.io/blog/crdt-collaboration-forensics</link>
+      <guid isPermaLink="true">https://netsculpt.io/blog/crdt-collaboration-forensics</guid>
+      <description>When two analysts annotate the same packet simultaneously, what happens? Without conflict resolution, one annotation silently overwrites the other. NetSculpt uses Conflict-free Replicated Data Types to make concurrent edits safe by construction.</description>
+      <pubDate>Wed, 11 Feb 2026 00:00:00 GMT</pubDate>
+      <category>Collaboration</category>
+      <author>team@netsculpt.io (NetSculpt Team)</author>
+    </item>
+
+    <item>
+      <title>TLS Fingerprinting Without Decryption: JA3, JA4, and Beyond</title>
+      <link>https://netsculpt.io/blog/tls-fingerprinting-without-decryption</link>
+      <guid isPermaLink="true">https://netsculpt.io/blog/tls-fingerprinting-without-decryption</guid>
+      <description>You do not need to break encryption to fingerprint a TLS client. The ClientHello handshake message contains enough information to uniquely identify most TLS stacks — and by extension, the malware or software generating the traffic.</description>
+      <pubDate>Mon, 03 Feb 2026 00:00:00 GMT</pubDate>
+      <category>Security</category>
+      <author>team@netsculpt.io (NetSculpt Team)</author>
+    </item>
+
+  </channel>
+</rss>

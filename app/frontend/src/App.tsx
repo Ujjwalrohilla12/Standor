@@ -12,7 +12,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { ArrowLeft, Home } from 'lucide-react';
 
 // ───── Eagerly loaded (critical path — tiny components) ─────
-import NavBar from './components/NavBar';
+import Navbar from './components/Navbar';
 import LandingNav from './components/LandingNav';
 import GridBackground from './components/GridBackground';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -169,7 +169,7 @@ function AppContent() {
       <GlowCursor />
       {!isAuthPage && !isMarketingPage && <GridBackground interactive={false} />}
       <div className="relative z-10">
-        {!hideNav && <NavBar />}
+        {!hideNav && <Navbar />}
         {isMarketingPage && <LandingNav />}
         <PageTransition>
           <Suspense fallback={<PageLoader />}>

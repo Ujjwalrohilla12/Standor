@@ -1,0 +1,41 @@
+User-agent: *
+Allow: /
+
+# Marketing & product pages
+Allow: /features
+Allow: /how-it-works
+Allow: /architecture
+Allow: /security
+Allow: /use-cases
+Allow: /customers
+Allow: /about
+Allow: /contact
+Allow: /blog
+Allow: /docs
+Allow: /developers
+Allow: /integrations
+Allow: /resources
+Allow: /faq
+Allow: /enterprise
+Allow: /privacy
+Allow: /terms
+Allow: /legal
+Allow: /accessibility
+Allow: /system-status
+
+# Disallow authenticated app routes
+Disallow: /dashboard
+Disallow: /session
+Disallow: /upload
+Disallow: /settings
+Disallow: /team-rooms
+Disallow: /rules
+Disallow: /webhooks
+Disallow: /admin
+Disallow: /auth/
+Disallow: /org/
+
+# Disallow API
+Disallow: /api/
+
+Sitemap: https://netsculpt.io/sitemap.xml
