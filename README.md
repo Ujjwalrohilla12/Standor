@@ -1,4 +1,5 @@
-# Standor — Code Together
+# Standor — Code Together 
+
 
 **Standor** is a real-time collaborative coding interview platform with AI-powered evaluation and structured hiring analytics.
 
