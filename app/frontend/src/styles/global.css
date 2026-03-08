@@ -1,0 +1,306 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--ns-font-ui);
+  background: var(--ns-bg-900);
+  color: var(--ns-text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: none;
+}
+
+code,
+pre {
+  font-family: var(--ns-font-mono);
+}
+
+button {
+  font-family: var(--ns-font-ui);
+  border: none;
+  cursor: pointer;
+  transition:
+    background-color var(--ns-duration-micro) var(--ns-ease),
+    color var(--ns-duration-micro) var(--ns-ease),
+    border-color var(--ns-duration-micro) var(--ns-ease),
+    box-shadow var(--ns-duration-micro) var(--ns-ease),
+    transform var(--ns-duration-micro) var(--ns-ease),
+    opacity var(--ns-duration-micro) var(--ns-ease);
+  outline: none;
+  will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+button:focus-visible {
+  outline: 1px solid var(--ns-white);
+  outline-offset: 2px;
+}
+
+input,
+textarea,
+select {
+  font-family: var(--ns-font-ui);
+  background: var(--ns-bg-800);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--ns-text-primary);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  transition:
+    border-color 200ms var(--ns-ease),
+    box-shadow 200ms var(--ns-ease),
+    background-color 200ms var(--ns-ease);
+}
+
+/* All anchor/link elements */
+a {
+  transition:
+    color 180ms var(--ns-ease),
+    opacity 180ms var(--ns-ease),
+    text-decoration-color 180ms var(--ns-ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--ns-grey-600);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ns-grey-700);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ns-grey-600);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+::selection {
+  background: var(--ns-grey-600);
+  color: var(--ns-white);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Accessibility overrides ─────────────────────────── */
+
+/* Reduced motion toggle */
+[data-reduced-motion="true"] *,
+[data-reduced-motion="true"] *::before,
+[data-reduced-motion="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* High contrast toggle */
+[data-high-contrast="true"] {
+  --ns-text-primary: #ffffff;
+  --ns-text-secondary: #e0e0e0;
+  --ns-bg-900: #000000;
+  --ns-bg-800: #111111;
+  --ns-border: rgba(255, 255, 255, 0.35);
+}
+
+[data-high-contrast="true"] body {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+[data-high-contrast="true"] button,
+[data-high-contrast="true"] a {
+  text-decoration-skip-ink: auto;
+}
+
+[data-high-contrast="true"] input,
+[data-high-contrast="true"] textarea,
+[data-high-contrast="true"] select {
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Font size toggle */
+[data-font-size="sm"] body {
+  font-size: 14px;
+}
+
+[data-font-size="md"] body {
+  font-size: 16px;
+}
+
+[data-font-size="lg"] body {
+  font-size: 18px;
+}
+
+/* ── Smooth scroll ──────────────────────── */
+html {
+  scroll-behavior: smooth;
+
+  /* Consistent smooth scrolling on all platforms */
+  scrollbar-gutter: stable;
+
+  /* Scale entire site to 110% for a denser, more premium feel */
+  zoom: 1.1;
+}
+
+/* ── Button light sweep micro-interaction ─ */
+.btn-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-sweep::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg,
+      transparent 35%,
+      rgba(255, 255, 255, 0.15) 45%,
+      rgba(255, 255, 255, 0.15) 55%,
+      transparent 65%);
+  transform: translateX(-120%);
+  transition: transform var(--ns-duration-section) var(--ns-ease);
+  pointer-events: none;
+}
+
+.btn-sweep:hover::after {
+  transform: translateX(120%);
+}
+
+/* ── Hero text reveal animation ─────────── */
+@keyframes heroReveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-reveal {
+  animation: heroReveal 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.hero-reveal-d1 {
+  animation-delay: 100ms;
+}
+
+.hero-reveal-d2 {
+  animation-delay: 200ms;
+}
+
+.hero-reveal-d3 {
+  animation-delay: 300ms;
+}
+
+/* ── CTA button premium presence ────────── */
+.btn-cta {
+  box-shadow:
+    var(--ns-shadow-md),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all var(--ns-duration-card) var(--ns-ease);
+}
+
+.btn-cta:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    var(--ns-shadow-lg),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* ── Feature card scroll-in animation ───── */
+@keyframes cardRise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-rise {
+  animation: cardRise var(--ns-duration-section) var(--ns-ease) both;
+}
+
+.card-rise-d1 {
+  animation-delay: 100ms;
+}
+
+.card-rise-d2 {
+  animation-delay: 200ms;
+}
+
+.card-rise-d3 {
+  animation-delay: 300ms;
+}
+
+/* ── Enterprise Card Surface ─────────────── */
+/* L2 elevated cards with restrained hover.
+   scale 0.98→1, shadow depth shift, border glow. */
+.ns-card-enterprise {
+  transform: scale(0.98);
+  box-shadow: var(--ns-shadow-card);
+  transition:
+    transform var(--ns-duration-card) var(--ns-ease),
+    box-shadow var(--ns-duration-card) var(--ns-ease),
+    border-color var(--ns-duration-card) var(--ns-ease),
+    opacity var(--ns-duration-micro) var(--ns-ease);
+}
+
+.ns-card-enterprise:hover {
+  transform: scale(1);
+  box-shadow: var(--ns-shadow-card-hover);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* L3 glow — controlled accent on active state */
+.ns-glow-active:active,
+.ns-glow-active:focus-visible {
+  box-shadow: 0 0 20px var(--ns-glow-accent);
+}

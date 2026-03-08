@@ -1,0 +1,6 @@
+.App {
+  min-height: 100vh;
+  font-family: var(--ns-font-ui);
+  background: var(--ns-bg-900);
+  color: var(--ns-text-primary);
+}

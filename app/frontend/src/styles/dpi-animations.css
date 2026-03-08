@@ -1,0 +1,341 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   DPI Tools — Premium Animations & Effects (White Accent)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@keyframes dpi-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes dpi-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes dpi-scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes dpi-slide-right {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes dpi-glow-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.04);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+    }
+}
+
+@keyframes dpi-border-glow {
+
+    0%,
+    100% {
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    50% {
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+}
+
+@keyframes dpi-float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes dpi-shimmer {
+    0% {
+        background-position: -200% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
+}
+
+@keyframes dpi-rotate-slow {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes dpi-pulse-ring {
+    0% {
+        transform: scale(0.9);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(0.9);
+        opacity: 0.6;
+    }
+}
+
+@keyframes dpi-gradient-flow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes dpi-particle-drift {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.3;
+    }
+
+    25% {
+        transform: translate(30px, -40px) scale(1.2);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: translate(-20px, -80px) scale(0.8);
+        opacity: 0.2;
+    }
+
+    75% {
+        transform: translate(40px, -60px) scale(1.1);
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: translate(0, -120px) scale(0.6);
+        opacity: 0;
+    }
+}
+
+/* ── Animation Utility Classes ── */
+.dpi-animate-fade-up {
+    animation: dpi-fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.dpi-animate-fade-in {
+    animation: dpi-fade-in 0.5s ease both;
+}
+
+.dpi-animate-scale-in {
+    animation: dpi-scale-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.dpi-animate-slide-r {
+    animation: dpi-slide-right 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.dpi-animate-float {
+    animation: dpi-float 4s ease-in-out infinite;
+}
+
+.dpi-animate-glow {
+    animation: dpi-glow-pulse 3s ease-in-out infinite;
+}
+
+.dpi-animate-border {
+    animation: dpi-border-glow 3s ease-in-out infinite;
+}
+
+.dpi-animate-shimmer {
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: dpi-shimmer 3s linear infinite;
+}
+
+.dpi-animate-rotate {
+    animation: dpi-rotate-slow 20s linear infinite;
+}
+
+.dpi-animate-pulse {
+    animation: dpi-pulse-ring 2s ease-in-out infinite;
+}
+
+.dpi-delay-1 {
+    animation-delay: 0.08s;
+}
+
+.dpi-delay-2 {
+    animation-delay: 0.16s;
+}
+
+.dpi-delay-3 {
+    animation-delay: 0.24s;
+}
+
+.dpi-delay-4 {
+    animation-delay: 0.32s;
+}
+
+.dpi-delay-5 {
+    animation-delay: 0.4s;
+}
+
+.dpi-delay-6 {
+    animation-delay: 0.48s;
+}
+
+.dpi-delay-7 {
+    animation-delay: 0.56s;
+}
+
+.dpi-delay-8 {
+    animation-delay: 0.64s;
+}
+
+/* ── Glassmorphism ── */
+.dpi-glass {
+    background: rgba(14, 14, 15, 0.7);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.dpi-glass-hover:hover {
+    background: rgba(14, 14, 15, 0.85);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* ── Gradient Text (White) ── */
+.dpi-gradient-text {
+    background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 40%, #ffffff 60%, #d0d0d0 100%);
+    background-size: 200% 200%;
+    animation: dpi-gradient-flow 6s ease infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ── Animated Border Cards ── */
+.dpi-card-animated {
+    position: relative;
+    overflow: hidden;
+}
+
+.dpi-card-animated::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 40%, transparent 60%, rgba(255, 255, 255, 0.08));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.dpi-card-animated:hover::before {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), transparent 40%, transparent 60%, rgba(255, 255, 255, 0.18));
+}
+
+/* ── Upload Dropzone ── */
+.dpi-dropzone-idle {
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dpi-dropzone-idle:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.04), inset 0 0 30px rgba(255, 255, 255, 0.02);
+}
+
+.dpi-dropzone-active {
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.08), inset 0 0 40px rgba(255, 255, 255, 0.03);
+    transform: scale(1.01);
+}
+
+/* ── Hover Lift ── */
+.dpi-lift {
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+}
+
+.dpi-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* ── Floating Particles ── */
+.dpi-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    animation: dpi-particle-drift 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* ── Scrollbar ── */
+.dpi-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.dpi-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dpi-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+}
+
+.dpi-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}

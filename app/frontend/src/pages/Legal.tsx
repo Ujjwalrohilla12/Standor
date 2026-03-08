@@ -1,0 +1,146 @@
+import { useState } from 'react';
+import { ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+const TABS = ['Cookie Policy', 'Data Processing Agreement', 'Compliance'] as const;
+type Tab = typeof TABS[number];
+
+export default function Legal() {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<Tab>('Cookie Policy');
+
+  return (
+    <div className="pt-32 pb-24 px-6">
+      <div className="ns-container">
+
+        <div className="max-w-4xl mb-16">
+          <h1 className="text-[clamp(2.5rem,8vw,5.5rem)] font-bold text-white leading-[0.9] tracking-tighter mb-10">
+            Legal <br />
+            <span className="text-ns-grey-600">Documentation.</span>
+          </h1>
+          <p className="text-xl text-ns-grey-400 leading-relaxed font-medium max-w-2xl">
+            Cookie Policy, Data Processing Agreement, and compliance information for Standor.
+          </p>
+        </div>
+
+        <div className="flex gap-1 p-1 bg-white/[0.03] border border-white/[0.06] rounded-xl mb-16 w-fit flex-wrap">
+          {TABS.map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-5 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                activeTab === tab ? 'bg-white/[0.08] text-white' : 'text-neutral-500 hover:text-white'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === 'Cookie Policy' && (
+          <div className="max-w-3xl space-y-12">
+            <div>
+              <p className="text-xs font-mono text-ns-grey-600 uppercase tracking-widest mb-6">Last updated: 1 January 2026</p>
+              <h2 className="text-3xl font-bold text-white mb-6 tracking-tighter">Cookie Policy</h2>
+              <p className="text-ns-grey-400 leading-relaxed">
+                This Cookie Policy explains how Standor uses cookies and similar tracking technologies when you visit our website and use our services.
+              </p>
+            </div>
+            {[
+              { title: '1. What Are Cookies?', body: 'Cookies are small text files placed on your device by a website. They are widely used to make websites work or work more efficiently, and to provide information to website operators.' },
+              { title: '2. Strictly Necessary Cookies', body: 'Required for the site to function. These include authentication session tokens stored in httpOnly cookies. You cannot opt out of these while using the service.' },
+              { title: '3. Functional Cookies', body: 'Used to remember your preferences (e.g., reduced-motion setting). Set only in your browser local storage, not transmitted to servers.' },
+              { title: '4. Analytics Cookies', body: 'We use privacy-first analytics with no cross-site tracking, no fingerprinting, and no personal data sent to third parties. You can opt out via the Cookie Consent banner.' },
+              { title: '5. Third-Party Cookies', body: 'We do not embed third-party advertising networks. If you use Google Sign-In, Google may set cookies pursuant to their own Privacy Policy.' },
+              { title: '6. Managing Cookies', body: 'You can control cookies through your browser settings. Disabling cookies may affect authentication. You can withdraw consent for optional cookies via the Cookie Consent banner.' },
+            ].map((section, i) => (
+              <div key={i}>
+                <h3 className="text-lg font-bold text-white mb-4">{section.title}</h3>
+                <p className="text-ns-grey-400 leading-relaxed">{section.body}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {activeTab === 'Data Processing Agreement' && (
+          <div className="max-w-3xl space-y-12">
+            <div>
+              <p className="text-xs font-mono text-ns-grey-600 uppercase tracking-widest mb-6">Last updated: 1 January 2026</p>
+              <h2 className="text-3xl font-bold text-white mb-6 tracking-tighter">Data Processing Agreement</h2>
+              <p className="text-ns-grey-400 leading-relaxed">
+                This DPA forms part of the agreement between you ("Controller") and Standor ("Processor") and applies where personal data processing occurs as part of our services.
+              </p>
+            </div>
+            {[
+              { title: '1. Scope of Processing', body: 'Standor processes personal data solely to provide the services. Personal data processed may include: account information (email, name), uploaded PCAP files and derived packet metadata, and usage data for service operation and security.' },
+              { title: '2. Instructions for Processing', body: 'Standor shall process personal data only on your documented instructions. By accepting these terms and using the services, you instruct us to process personal data for providing, maintaining, securing, and improving the services.' },
+              { title: '3. Technical and Organisational Security Measures', body: 'We implement encryption in transit (TLS 1.2+) and at rest; access controls and authentication (MFA, RBAC); audit logging for all significant data operations; regular security testing; and employee access limited to service operation.' },
+              { title: '4. Sub-processors', body: 'We may engage sub-processors (e.g., infrastructure hosting providers). We ensure sub-processors are bound by data protection obligations no less protective than this DPA.' },
+              { title: '5. Data Subject Rights', body: 'We provide reasonable assistance to help you fulfill access requests, correction requests, erasure requests, and data portability requests. Data export and account deletion features are available directly in account settings.' },
+              { title: '6. Data Retention and Deletion', body: 'Upon termination, we will delete or return personal data within 30 days unless retention is required by law. You may delete your data at any time via account settings.' },
+              { title: '7. Breach Notification', body: 'In the event of a personal data breach, we will notify you without undue delay and in any case within 72 hours, providing sufficient information for regulatory notifications.' },
+            ].map((section, i) => (
+              <div key={i}>
+                <h3 className="text-lg font-bold text-white mb-4">{section.title}</h3>
+                <p className="text-ns-grey-400 leading-relaxed">{section.body}</p>
+              </div>
+            ))}
+            <div className="ns-glass-dark rounded-2xl border border-white/[0.07] p-8">
+              <h4 className="font-bold text-white mb-3">Need a signed DPA?</h4>
+              <p className="text-sm text-ns-grey-500 mb-6">Enterprise customers can request a countersigned copy for their procurement records.</p>
+              <button
+                onClick={() => navigate('/contact')}
+                className="group flex items-center gap-2 text-sm font-bold text-white hover:text-ns-accent transition-colors"
+              >
+                Request Signed DPA
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'Compliance' && (
+          <div className="max-w-3xl space-y-12">
+            <div>
+              <h2 className="text-3xl font-bold text-white mb-6 tracking-tighter">Compliance Overview</h2>
+              <p className="text-ns-grey-400 leading-relaxed">Standor is designed with compliance requirements in mind. The following describes our current compliance posture.</p>
+            </div>
+            <div className="space-y-4">
+              {[
+                { name: 'GDPR', status: 'Compliant', desc: 'We process EU personal data in compliance with GDPR. Data subject rights, consent management, DPA, and breach notification procedures are all in place.' },
+                { name: 'UK GDPR', status: 'Compliant', desc: 'Our UK user data is handled in compliance with the UK GDPR and the Data Protection Act 2018.' },
+                { name: 'SOC 2 Type II', status: 'Planned', desc: 'SOC 2 Type II audit is in progress. Enterprise customers can request our current security posture documentation in the interim.' },
+                { name: 'HIPAA', status: 'Enterprise', desc: 'HIPAA Business Associate Agreements (BAA) are available for Enterprise customers operating in healthcare environments.' },
+                { name: 'CCPA', status: 'Compliant', desc: 'California residents can exercise their rights under CCPA including data access, deletion, and opt-out via account settings or by contacting us.' },
+              ].map((item, i) => (
+                <div key={i} className="ns-glass rounded-2xl border border-white/[0.05] p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-bold text-white">{item.name}</span>
+                    <span className={`text-[10px] px-3 py-1 rounded-full font-mono border ${
+                      item.status === 'Compliant' ? 'bg-ns-success/10 text-ns-success border-ns-success/20' :
+                      item.status === 'Enterprise' ? 'bg-ns-accent/10 text-ns-accent border-ns-accent/20' :
+                      'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
+                    }`}>{item.status}</span>
+                  </div>
+                  <p className="text-sm text-ns-grey-500 leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+            <div className="ns-glass-dark rounded-2xl border border-white/[0.07] p-8">
+              <h4 className="font-bold text-white mb-3">Enterprise compliance packages</h4>
+              <p className="text-sm text-ns-grey-500 mb-6">Enterprise customers receive compliance documentation, security questionnaire responses, and a dedicated compliance contact.</p>
+              <button
+                onClick={() => navigate('/contact')}
+                className="group flex items-center gap-2 text-sm font-bold text-white hover:text-ns-accent transition-colors"
+              >
+                Contact Enterprise Sales
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,168 @@
+/* Standor Design System — Dark Apple-like + Metallic Grey accents */
+
+:root {
+  /* Core Palette */
+  --ns-black: #000000;
+  --ns-bg-900: #05070A;
+  --ns-bg-800: #0B1118;
+  --ns-bg-700: #141B24;
+  --ns-bg-600: #1C2633;
+
+  --ns-surface-500: #3A3A3C;
+  --ns-surface-400: #48484A;
+  --ns-surface-300: #636366;
+
+  --ns-grey-500: #8E8E93;
+  --ns-grey-400: #AEAEB2;
+  --ns-grey-300: #C7C7CC;
+  --ns-grey-200: #D1D1D6;
+  --ns-grey-100: #E5E5EA;
+
+  --ns-white: #FFFFFF;
+  --ns-off-white: #F2F2F7;
+
+  /* Accent — Shiny Bright Silver */
+  --ns-accent: #D8D8E8;
+  --ns-accent-hover: #EEEEF6;
+  --ns-accent-dim: rgba(216, 216, 232, 0.12);
+  --ns-glow: rgba(216, 216, 232, 0.20);
+  --ns-teal: #C0C0CC;
+  --ns-teal-hover: #D8D8E4;
+  --ns-teal-dim: rgba(192, 192, 204, 0.12);
+
+  /* Status */
+  --ns-success: #32D74B;
+  --ns-warning: #FF9F0A;
+  --ns-danger: #FF453A;
+
+  /* Semantic Tokens */
+  --ns-bg: var(--ns-bg-900);
+  --ns-border: rgba(255, 255, 255, 0.08);
+  --ns-border-hover: rgba(255, 255, 255, 0.16);
+
+  --ns-text-primary: var(--ns-white);
+  --ns-text-secondary: var(--ns-grey-300);
+  --ns-text-muted: var(--ns-grey-500);
+  --ns-text-disabled: var(--ns-grey-700);
+
+  /* Glass — used only for elevated UI (L2): modals, nav, CTA, feature cards */
+  --ns-glass: rgba(18, 22, 28, 0.7);
+  --ns-glass-border: rgba(255, 255, 255, 0.08);
+  --ns-glass-blur: 8px;
+
+  /* Surface Hierarchy
+     L0 = background matte            (no blur)
+     L1 = data panels / analysis UI   (no blur, solid dark)
+     L2 = elevated modules / cards    (8px blur max)
+     L3 = micro-interaction overlays  (glow, active states) */
+  --ns-surface-l0: #05070A;
+  --ns-surface-l1: #0B1118;
+  --ns-surface-l1-border: rgba(255, 255, 255, 0.06);
+  --ns-surface-l2: rgba(18, 22, 28, 0.7);
+  --ns-surface-l2-border: rgba(255, 255, 255, 0.08);
+  --ns-surface-l2-blur: 8px;
+  --ns-glow-accent: rgba(216, 216, 232, 0.15);
+
+  /* Shadows — restrained depth, no drama */
+  --ns-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --ns-shadow-md: 0 10px 40px rgba(0, 0, 0, 0.35);
+  --ns-shadow-lg: 0 18px 60px rgba(0, 0, 0, 0.5);
+  --ns-shadow-card: 0 10px 40px rgba(0, 0, 0, 0.35);
+  --ns-shadow-card-hover: 0 18px 60px rgba(0, 0, 0, 0.5);
+
+  /* Typography */
+  --ns-font-ui: 'SF Pro Display', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ns-font-mono: 'SF Mono', 'JetBrains Mono', monospace;
+
+  /* Spacing — generous vertical rhythm */
+  --ns-space-1: 8px;
+  --ns-space-2: 16px;
+  --ns-space-3: 24px;
+  --ns-space-4: 32px;
+  --ns-space-6: 56px;
+  --ns-space-8: 80px;
+
+  /* Container */
+  --ns-container-max: 1320px;
+
+  /* Motion — Elite Motion System
+     Single easing: fast start, smooth settle, intentional feel.
+     No spring. No elastic. No overshoot. */
+  --ns-ease: cubic-bezier(0.22, 0.9, 0.3, 1);
+  --ns-ease-out: cubic-bezier(0.22, 0.9, 0.3, 1);
+  --ns-duration-micro: 200ms;
+  /* micro hover */
+  --ns-duration-card: 280ms;
+  /* card elevate */
+  --ns-duration-modal: 420ms;
+  /* modal open */
+  --ns-duration-section: 600ms;
+  /* section reveal */
+  --ns-duration-page: 600ms;
+  /* page transition */
+
+  /* Legacy aliases */
+  --ns-duration-fast: 200ms;
+  --ns-duration-base: 280ms;
+  --ns-duration-slow: 600ms;
+}
+
+/* Utility classes */
+.ns-glass {
+  background: var(--ns-glass);
+  backdrop-filter: blur(var(--ns-glass-blur));
+  -webkit-backdrop-filter: blur(var(--ns-glass-blur));
+  border: 1px solid var(--ns-glass-border);
+}
+
+.ns-gradient-blue {
+  background: linear-gradient(135deg, #8A8A9A 0%, #CACAD8 100%);
+}
+
+.ns-text-gradient {
+  background: linear-gradient(to bottom, #FFFFFF 0%, #D1D1D6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ─── Surface Hierarchy Utilities ───────────────────────────────── */
+
+/* L1 — data / analysis panels. Solid, no blur, crisp. */
+.ns-panel {
+  background: var(--ns-surface-l1);
+  border: 1px solid var(--ns-surface-l1-border);
+}
+
+/* L2 — elevated cards, CTAs, floating modules */
+.ns-card {
+  background: var(--ns-surface-l2);
+  backdrop-filter: blur(var(--ns-surface-l2-blur));
+  -webkit-backdrop-filter: blur(var(--ns-surface-l2-blur));
+  border: 1px solid var(--ns-surface-l2-border);
+}
+
+/* ─── Page Transition Keyframe ───────────────────────────────────── */
+@keyframes ns-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
