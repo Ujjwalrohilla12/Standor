@@ -163,7 +163,7 @@ function SessionInner({ socket }: { socket: Socket | null }) {
         if (user?.name) joinMedia(roomId, (user as any)._id || (user as any).id, user.name);
         // Load problem details (best-effort)
         if (r.problem) {
-          problemsApi.getBySlug(r.problem).then(setProblem).catch(() => {/* problem not in DB yet */});
+          problemsApi.getBySlug(r.problem).then(setProblem).catch(() => {/* problem not in DB yet */ });
         }
       })
       .catch(() => toast.error('Session not found'))
@@ -174,7 +174,7 @@ function SessionInner({ socket }: { socket: Socket | null }) {
   useEffect(() => {
     if (!socket || !roomId) return;
 
-        // Critical: join the socket room
+    // Critical: join the socket room
     socket.emit('join-room', roomId);
 
     socket.on('room-info', ({ participants: p }: { participants: number }) => setParticipants(p));
@@ -735,7 +735,7 @@ function SessionInner({ socket }: { socket: Socket | null }) {
               </button>
               {showLangMenu && (
                 <div className="absolute top-full left-0 mt-1 bg-[#0f0f0f] border border-white/[0.08] rounded-lg overflow-hidden z-50 shadow-2xl min-w-[120px]">
-                  {['javascript','typescript','python','java','cpp','go','rust'].map(l => (
+                  {['javascript', 'typescript', 'python', 'java', 'cpp', 'go', 'rust'].map(l => (
                     <button key={l} onClick={() => { setLanguage(l); setShowLangMenu(false); }} className={`w-full text-left px-3 py-1.5 text-[10px] font-mono hover:bg-white/[0.06] transition-colors ${l === language ? 'text-accent' : 'text-neutral-400'}`}>{l}</button>
                   ))}
                 </div>

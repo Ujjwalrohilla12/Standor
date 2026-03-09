@@ -86,7 +86,7 @@ export default function CreateSession() {
     try {
       const room = await roomsApi.create({ problem: problem.trim(), difficulty, language });
       toast.success('Interview session created');
-      navigate(`/session/${room.roomId}`);
+      navigate(`/meeting/${room.callId || (room as any).id || room._id}`);
     } catch (err: any) {
       toast.error(err.response?.data?.error || 'Failed to create session');
     } finally {
@@ -187,8 +187,8 @@ export default function CreateSession() {
                   type="button"
                   onClick={() => setDifficulty(d.value)}
                   className={`py-2.5 rounded-xl border text-sm font-semibold transition-all ${difficulty === d.value
-                      ? d.color
-                      : 'border-white/[0.06] text-neutral-600 bg-white/[0.02] hover:border-white/[0.12] hover:text-neutral-400'
+                    ? d.color
+                    : 'border-white/[0.06] text-neutral-600 bg-white/[0.02] hover:border-white/[0.12] hover:text-neutral-400'
                     }`}
                 >
                   {d.label}
@@ -209,8 +209,8 @@ export default function CreateSession() {
                   type="button"
                   onClick={() => setLanguage(l.value)}
                   className={`py-2 rounded-lg border text-xs font-mono transition-all ${language === l.value
-                      ? 'bg-white text-black border-white'
-                      : 'border-white/[0.06] text-neutral-500 bg-transparent hover:border-white/[0.15] hover:text-neutral-300'
+                    ? 'bg-white text-black border-white'
+                    : 'border-white/[0.06] text-neutral-500 bg-transparent hover:border-white/[0.15] hover:text-neutral-300'
                     }`}
                 >
                   {l.label}

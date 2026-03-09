@@ -2,12 +2,14 @@ import { create } from 'zustand';
 
 export interface User {
   id: string;
+  _id?: string;
   email: string;
   name: string;
-  roles: string[];
-  providers?: Array<{ provider: string; providerId?: string }>;
+  role: 'USER' | 'ADMIN';
+  avatar?: string;
   emailVerified?: boolean;
-  mfaEnabled: boolean;
+  mfaEnabled?: boolean;
+  providers?: Array<{ provider: string; providerId?: string }>;
 }
 
 export interface Session {
@@ -68,9 +70,8 @@ export interface AppSettings {
 interface StoreState {
   user: User | null;
   token: string | null;
-  refreshToken: string | null;
   authLoading: boolean;
-  setAuth: (user: User, token: string, refreshToken?: string) => void;
+  setAuth: (user: User, token: string) => void;
   logout: () => void;
   setAuthLoading: (v: boolean) => void;
 
@@ -121,63 +122,41 @@ interface StoreState {
 }
 
 const useStore = create<StoreState>((set, get) => ({
-  user: JSON.parse(localStorage.getItem('standor_user') || 'null'),
+  user: (() => { try { return JSON.parse(localStorage.getItem('standor_user') || 'null'); } catch { return null; } })(),
   token: localStorage.getItem('standor_token') || null,
-  refreshToken: localStorage.getItem('standor_refresh') || null,
   authLoading: false,
 
-  setAuth: (user, token, refreshToken) => {
+  setAuth: (user, token) => {
     localStorage.setItem('standor_user', JSON.stringify(user));
     localStorage.setItem('standor_token', token);
-    if (refreshToken) localStorage.setItem('standor_refresh', refreshToken);
-    set({ user, token, refreshToken: refreshToken || get().refreshToken, authLoading: false });
+    set({ user, token, authLoading: false });
   },
 
   logout: () => {
-    // Fire-and-forget: tell backend to invalidate refresh token
     const token = localStorage.getItem('standor_token');
-    const refreshToken = localStorage.getItem('standor_refresh');
-    const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://localhost:8001';
-    if (token || refreshToken) {
-      fetch(`${backendUrl}/api/auth/logout`, {
+    if (token) {
+      fetch('http://localhost:4000/api/auth/logout', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ refreshToken }),
-      }).catch(() => { /* ignore network errors during logout */ });
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        credentials: 'include',
+      }).catch(() => { });
     }
-    // Clear all local auth state
     localStorage.removeItem('standor_user');
     localStorage.removeItem('standor_token');
-    localStorage.removeItem('standor_refresh');
-    // Clear any other app-specific storage
-    sessionStorage.clear();
-    set({
-      user: null,
-      token: null,
-      refreshToken: null,
-      sessions: [],
-      currentSession: null,
-      packets: [],
-      selectedPacket: null,
-      annotations: [],
-      collaborators: [],
-    });
+    set({ user: null, token: null, sessions: [], currentSession: null, packets: [], selectedPacket: null, annotations: [], collaborators: [] });
   },
 
   setAuthLoading: (v) => set({ authLoading: v }),
 
   theme: 'dark',
-  toggleTheme: () => set((state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
+  toggleTheme: () => set((s) => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })),
 
   sessions: [],
   currentSession: null,
   setSessions: (sessions) => set({ sessions }),
   setCurrentSession: (session) => set({ currentSession: session }),
-  addSession: (session) => set((state) => ({ sessions: [session, ...state.sessions] })),
-  deleteSession: (id) => set((state) => ({ sessions: state.sessions.filter(s => s.id !== id) })),
+  addSession: (session) => set((s) => ({ sessions: [session, ...s.sessions] })),
+  deleteSession: (id) => set((s) => ({ sessions: s.sessions.filter(x => x.id !== id) })),
 
   packets: [],
   selectedPacket: null,
@@ -189,13 +168,11 @@ const useStore = create<StoreState>((set, get) => ({
 
   annotations: [],
   setAnnotations: (annotations) => set({ annotations }),
-  addAnnotation: (annotation) => set((state) => ({ annotations: [...state.annotations, annotation] })),
+  addAnnotation: (annotation) => set((s) => ({ annotations: [...s.annotations, annotation] })),
 
   collaborators: [],
-  addCollaborator: (user) => set((state) => ({ collaborators: [...state.collaborators, user] })),
-  removeCollaborator: (userId) => set((state) => ({
-    collaborators: state.collaborators.filter(c => c.id !== userId),
-  })),
+  addCollaborator: (user) => set((s) => ({ collaborators: [...s.collaborators, user] })),
+  removeCollaborator: (userId) => set((s) => ({ collaborators: s.collaborators.filter(c => c.id !== userId) })),
 
   isPlaying: false,
   playbackSpeed: 1,
@@ -206,25 +183,15 @@ const useStore = create<StoreState>((set, get) => ({
 
   showPayloadPanel: true,
   navCollapsed: false,
-  togglePayloadPanel: () => set((state) => ({ showPayloadPanel: !state.showPayloadPanel })),
-  toggleNav: () => set((state) => ({ navCollapsed: !state.navCollapsed })),
+  togglePayloadPanel: () => set((s) => ({ showPayloadPanel: !s.showPayloadPanel })),
+  toggleNav: () => set((s) => ({ navCollapsed: !s.navCollapsed })),
 
-  settings: {
-    reducedMotion: false,
-    highContrast: false,
-    obfuscateData: true,
-  },
-  updateSettings: (newSettings) => set((state) => ({
-    settings: { ...state.settings, ...newSettings },
-  })),
+  settings: { reducedMotion: false, highContrast: false, obfuscateData: true },
+  updateSettings: (newSettings) => set((s) => ({ settings: { ...s.settings, ...newSettings } })),
 
   notifications: [],
-  addNotification: (notification) => set((state) => ({
-    notifications: [{ id: Date.now(), ...notification }, ...state.notifications],
-  })),
-  dismissNotification: (id) => set((state) => ({
-    notifications: state.notifications.filter(n => n.id !== id),
-  })),
+  addNotification: (notification) => set((s) => ({ notifications: [{ id: Date.now(), ...notification }, ...s.notifications] })),
+  dismissNotification: (id) => set((s) => ({ notifications: s.notifications.filter(n => n.id !== id) })),
 }));
 
 export default useStore;

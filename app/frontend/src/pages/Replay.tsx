@@ -210,12 +210,42 @@ export default function Replay() {
 
           {/* Playback Controls */}
           <div className="border-t border-border bg-bg-900 px-4 py-3 space-y-2 shrink-0">
-            {/* Progress Bar */}
-            <div className="relative h-1.5 bg-white/[0.05] rounded-full overflow-hidden">
-              <div
-                className="absolute h-full bg-accent transition-all duration-200"
-                style={{ width: `${progress * 100}%` }}
+            {/* Seekable Timeline */}
+            <div className="flex items-center gap-2">
+              <span className="text-[9px] font-mono text-neutral-600 w-8 text-right">
+                {currentIdx < 0 ? '0%' : `${Math.round(progress * 100)}%`}
+              </span>
+              <input
+                type="range"
+                min={0}
+                max={Math.max(0, totalEvents - 1)}
+                value={Math.max(0, currentIdx)}
+                onChange={(e) => {
+                  const targetIdx = parseInt(e.target.value);
+                  if (!data) return;
+                  stopReplay();
+                  // Rebuild state by replaying all events up to targetIdx
+                  if (editorRef.current) editorRef.current.setValue(data.initialSnapshot || '');
+                  setChatLog([]);
+                  const newChat: typeof chatLog = [];
+                  for (let i = 0; i <= targetIdx; i++) {
+                    const evt = data.events[i];
+                    if (evt.type === 'editor-delta') {
+                      const delta = evt.payload as any;
+                      if (typeof delta.code === 'string' && editorRef.current) editorRef.current.setValue(delta.code);
+                    } else if (evt.type === 'chat') {
+                      const p = evt.payload as any;
+                      newChat.push({ sender: String(p.sender || ''), text: String(p.text || ''), ts: new Date(evt.timestamp).getTime() });
+                    }
+                  }
+                  setChatLog(newChat);
+                  setCurrentIdx(targetIdx);
+                  idxRef.current = targetIdx;
+                }}
+                className="flex-1 accent-blue-500 h-1.5 cursor-pointer"
+                style={{ accentColor: 'var(--accent, #137fec)' }}
               />
+              <span className="text-[9px] font-mono text-neutral-600 w-8">100%</span>
             </div>
 
             <div className="flex items-center gap-3">

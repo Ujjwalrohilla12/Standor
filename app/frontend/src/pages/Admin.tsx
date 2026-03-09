@@ -83,7 +83,7 @@ export default function Admin() {
 
   // Guard: only admins
   useEffect(() => {
-    if (user && !user.roles?.includes('admin')) {
+    if (user && user.role !== 'ADMIN') {
       navigate('/dashboard');
     }
   }, [user, navigate]);

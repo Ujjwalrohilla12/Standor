@@ -1,0 +1,42 @@
+MERN stack
+
+TypeScript everywhere
+
+No Next.js
+
+React + Vite frontend
+
+Node + Express backend
+
+MongoDB + Mongoose
+
+WebRTC + Socket.IO
+
+Piston API
+
+DeepSeek / OpenRouter / Ollama
+
+Tailwind + DaisyUI
+
+Monaco Editor
+
+BullMQ / node-cron
+
+Redis (Upstash free)
+
+Docker + Kubernetes ready
+
+
+Tech Stack Mapping
+Frontend: React + Vite + TypeScript, Tailwind CSS + DaisyUI, Monaco Editor, Socket.IO client, WebRTC for video.
+​
+
+Backend: Node.js + Express + TypeScript, Mongoose (MongoDB), Socket.IO server, WebRTC signaling, Piston API for code exec.
+​
+
+AI: DeepSeek / OpenRouter / Ollama HTTP APIs for code analysis instead of OpenAI.
+​
+
+Infra: MongoDB Atlas, Redis (Upstash free) for queues + Socket.IO adapter, BullMQ + node-cron for jobs, Docker images and K8s manifests for deployment.
+​
+

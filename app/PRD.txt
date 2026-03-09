@@ -1,0 +1,251 @@
+Step 1 :  You search for SDA 
+Step 2 : Read and understand this
+Step 3 : Be prepared with the conceptual understanding 
+Step 4 : Take 90 minutes and write down 20 lines about SDA -> DNAC, Fabric, ISE.
+ 
+Manish Kumar has temporarily joined the chat.
+
+ 
+Manish Kumar no longer has access to the chat.
+
+ 
+Manish Kumar has temporarily joined the chat.
+
+ 
+Alqueem no longer has access to the chat.
+
+ 
+Appu B Appannagol  no longer has access to the chat.
+
+ 
+Manish Kumar no longer has access to the chat.
+
+ 
+Manikant Sharma no longer has access to the chat.
+
+ 
+Manikant Sharma has temporarily joined the chat.
+
+ 
+Chaturvedi, Amit k.
+Step 1 :  You search for SDA   Step 2 : Read and understand this  Step 3 : Be prepared with the conceptual understanding   Step 4 : Take 90 minutes and write down 20 lines about SDA -> DNAC, Fabric, ISE.
+Expecting reply Everyone
+ 
+I am waiting.
+ 
+BRB
+ 
+1. The SD access network plane has three different access planes in traditional devices networking devices Data plane, Control plane and Management Plane.
+
+2. Data Plane is responsible for actually moving packets, works at high speed in hardware, enforces policies while forwarding.
+
+3. Control Plane decides how traffic should flow, maintains routing and endpoint mappings.
+
+4. Management Plane is used by network admins, handles configuration and monitoring, provides automation and assurance.
+
+5. SD-Access is part of Cisco’s intent-based networking architecture, managed mainly through Cisco DNA Center and integrated with Cisco Identity Services Engine (ISE).
+
+6. SDA simplifies the network automation by combining automation, security, segmentation and centralized control.
+
+7. The data travels in a fabric which has the physical underlay and the logical overlay which allows advanced features like segmentation, automation.
+
+8. Cisco Identity engine used for policy enforcement authentication and authorization
+
+9. The key attributes to DNA center are design, policy, provision and assurance
+
+10. Design will create network hierarchy ,configure VLANs and SSIDs and set device roles (Access, Distribution, Border)
+
+11. Policy will create user groups define virtual networks create access control policies
+
+12. Provision will discover devices, add them into sites, assign them to fabric roles and deploy SSIDs and network settings
+
+13. Assurance will device monitoring, device status and any error then their root cause analysis.
+
+14. SD-Access separates responsibilities into Control Plane → LISP, Data Plane → VXLAN, Policy Plane → TrustSec, Mannagement plane - Cisco DNA centre
+
+15. LISP = Locator/ID Separation Protocol is used in SD-Access to separate who a device is, where the device is.
+
+16. It is done by using RLOC and EID protocols
+
+17. VXLAN is a network virtualization technology designed to establish a Layer 2 overlay network over a Layer 3 infrastructure.
+
+18. Its key function is Overlay function and encapsulation
+
+19. Cisco TrustSec is a network security solution that focuses on simplifying security policy enforcement through the use of Group-Based Access Control (GBAC).
+
+20. Cisco DNA Center is a comprehensive network management platform designed to simplify the management of enterprise networks.
+
+ 
+Software Defined Access (SDA) is Cisco’s campus architecture that separates policy from traditional device-by-device configuration.It uses a controller-based approach where Cisco DNA Center manages and automates the entire fabric network.
+The SDA architecture consists of three main components: DNA Center, the Fabric infrastructure, and Cisco ISE.
+The underlay network is a pure Layer 3 routed IP network that provides basic reachability between all fabric devices.
+Routing protocols like IS-IS or OSPF are used in the underlay to ensure fast convergence and scalability.
+The overlay network runs on top of the underlay using VXLAN encapsulation for traffic separation.
+VXLAN adds an outer IP header and a VNI, which allows creation of up to 16 million logical networks.
+The control plane in SDA uses LISP to map endpoint identity (EID) to device location (RLOC).
+LISP allows endpoint mobility without changing IP addresses because location and identity are separated.
+Fabric Edge Nodes connect users and perform VXLAN encapsulation and decapsulation of traffic.
+Control Plane Nodes maintain the endpoint database and respond to mapping queries from edge devices.
+Border Nodes connect the SDA fabric to external networks like the data center or internet.
+Cisco ISE performs 802.1X authentication and acts as the RADIUS server for identity verification.
+After authentication, ISE assigns a Security Group Tag (SGT) to the user or device.
+SGT enables micro-segmentation by enforcing policy based on identity instead of IP addresses.
+Macro-segmentation is achieved using Virtual Networks, which isolate different departments or services.
+Policy enforcement is done using SGACLs, which define communication rules between security groups.
+DNA Center automates device onboarding, fabric provisioning, and policy deployment across the campus.
+SDA removes VLAN sprawl, reduces manual ACL configuration, and eliminates dependence on spanning tree.
+Overall, SDA provides scalable, secure, automated, and identity-based networking for modern enterprise campuses.
+ 
+Cisco SD-Access (SDA)-  Research lines Focus Areas: DNAC, Fabric, ISE
+Cisco SD-Access is Cisco's intent-based networking solution built on the Digital Network Architecture.
+The three core pillars are the Management Plane (Catalyst Center), the Fabric (overlay + underlay), and the Policy Plane (ISE). The power of SDA comes from tight integration of all three and none of them works effectively in isolation.
+Catalyst Center (formerly DNAC) is the single pane of glass for the entire SDA ecosystem. It handles Day-0 through Day-N operations including device provisioning via Plug-and-Play, software image management, policy authoring, and AI-powered assurance.
+One underappreciated DNAC feature is seed-switch-based onboarding. Only one device needs to be active on the dashboard and all other switches pull their underlay settings automatically from that seed.
+The SDA Fabric has two layers, Underlay and Overlay. The underlay is a routed Layer 3 network using IS-IS or OSPF, with BFD-enabled ECMP links and jumbo MTU (typically 9100) to handle VXLAN overhead.
+The overlay uses VXLAN for data plane encapsulation and LISP as the control plane.
+ 
+The Control Plane Node maintains the EID-to-RLOC mapping database, tracking which endpoint sits behind which edge node.
+Fabric roles are well defined. Edge Nodes are anycast gateways at the access layer, Border Nodes connect the fabric to external networks, and Control Plane Nodes run the LISP map-server.
+SDA delivers two segmentation layers. Macrosegmentation uses Virtual Networks (VNs) backed by dedicated VRFs and VXLAN VNIs to hard-isolate traffic groups like IoT from corporate users. Microsegmentation uses Security Group Tags (SGTs) embedded in the VXLAN header to enforce identity-based policy within a VN without touching IP addressing.
+SGTs follow the user or device regardless of where they connect. Policies are defined as a Source SGT to Destination SGT matrix with Permit or Deny decisions.
+ISE is the policy brain of SDA. It authenticates users and devices via 802.1X, assigns SGTs based on role, device posture, and location, and communicates those bindings to the fabric.
+ISE integrates with Catalyst Center via pxGrid for real-time SGT binding events and ERS REST APIs for bulk policy synchronization.
+One operational detail that trips teams up is that Catalyst Center supports only a single ISE Policy Admin Node (PAN) integration at a time.
+SDA wireless is native and consistent. Fabric-mode APs register directly with the LISP control plane via the Fabric WLC. Wireless clients get the same SGT treatment as wired clients, giving uniform policy enforcement across connection types, something traditional NAC solutions always struggled with.
+From a Zero Trust standpoint, SDA is Cisco's campus implementation of Zero Trust.
+DNAC Assurance correlates streaming telemetry, ISE authentication events, and NetFlow data using AI/ML to pinpoint specific issues like a client experiencing roaming latency due to an SGT mismatch.
+Palo Alto NGFWs complement SDA at the border. SDA handles East-West microsegmentation within the campus via SGTs while Palo Alto provides Layer 7 inspection and threat prevention for North-South traffic at the fabric border. Many enterprises route inter-VN traffic through a Palo Alto firewall for full application-layer visibility.
+Palo Alto Prisma SASE extends this further to remote users. Prisma Access via GlobalProtect gives remote workers the same identity-driven access policies as on-campus users. Cisco has a validated integration guide for Catalyst SD-WAN and Palo Alto Prisma SSE using IKEv2 tunnels for cloud-based NGFW enforcement at branches.
+SDA adoption numbers are telling. As of CiscoLive 2024, over 24,000 sites with 1.8 million+ devices are under management across 4,000+ installations.
+The hardest part of SDA is the migration. Moving from usual VLAN-based networks means rethinking IP pools, DHCP scopes, and policy design from scratch. Teams that skip proper design and go straight to the wizard are the ones who struggle.
+ 
+Sources
+Cisco.com: SD-Access Solution Design Guide (CVD)
+Cisco DevNet:  Introducing SD-Access
+Palo Alto Networks:  What Is Microsegmentation
+CiscoLive 2024:  SD-Access Best Practices (BRKENS-2502)
+ 
+ 
+-> Traditional Access Layer networks are configured manually on each switch and router through CLI which is a slow and complex to manage process.
+ 
+ 
+-> In order to reduce this complexity Cisco introduced a solution named SDA (Software Defined Access) to simplify and automate the network through a centralized controller.
+ 
+-> Cisco DNA Center (DNAC) (Digital Network Architecture Center) is the brain of SDA which acts as the centralized controller and management platform.
+ 
+-> SDA separates Control, Policy and Data Forwarding.
+ 
+-> ISE is responsible for Identity based authentication and policy enforcement in SDA.
+ 
+The SD access network plane has three different access planes in traditional devices networking devices Data plane, Control plane and Management Plane.
+
+Management Plane
+
+->This layer in SD Access is handled by Cisco DNA Center (which is now known as Cisco Catalyst Center).
+
+-> It is used for tasks such as network device configuration, policy enforcement, and troubleshooting.
+
+Control Plane
+
+-> In SD access this is the layer which decides where traffic should go.
+
+-> In SD-Access LISP (Locator/ID Separation Protocol) is used.
+
+-> It runs on a special device called the Control Plane Node.
+
+Data Plane
+
+->It is Traffic forwarding layer in SD Access network.
+
+->It is responsible for actually moving the data .
+ 
+SD Access Fabric Layers
+
+Fabric Edge Node : The layer where users connect in the network.
+
+Fabric Control Plane Node :  maintains database mapping
+
+Fabric Border Node : connects SDA to external networks
+
+SD-Access Fabric
+
+It is the actual network structure that carries traffic inside SD-Access.
+
+It uses VXLAN (to encapsulate traffic) and LISP (for device location mapping).
+ 
+ 
+-> ISE stands for Identity Services Engine which is used to provide identity based authentication and authorization.
+ 
+ 
+In traditional networking, devices have three main planes: Data Plane, Control Plane, and Management Plane.
+The Data Plane is responsible for forwarding packets from source to destination at high speed.
+The Data Plane works mostly in hardware and enforces policies while forwarding traffic.
+The Control Plane decides the path traffic should take inside the network.
+The Control Plane maintains routing tables and endpoint mapping information.
+The Management Plane is used by network administrators to configure, monitor, and manage devices.
+In SD-Access, these planes are logically separated and centrally managed.
+SD-Access is part of Cisco’s Intent-Based Networking architecture from Cisco Systems.
+The main controller of SD-Access is Cisco DNA Center.
+Cisco DNA Center provides centralized automation, configuration, and monitoring.
+The SD-Access network works using a fabric architecture.
+The fabric consists of an Underlay (physical network) and an Overlay (virtual network).
+The Underlay provides basic IP connectivity between network devices.
+The Overlay uses VXLAN to create virtual networks and provide segmentation.
+The Control Plane in SD-Access uses LISP to map device identity to its location.
+LISP separates EID (Endpoint ID) from RLOC (Routing Locator).
+The Data Plane uses VXLAN encapsulation to transport traffic across the fabric.
+Security and policy enforcement are handled by Cisco TrustSec technology.
+User authentication and policy decisions are done by Cisco Identity Services Engine (ISE).
+Overall, SD-Access simplifies enterprise networking by providing automation, security, segmentation, and centralized control.
+ 
+Qursheed has temporarily joined the chat.
+
+ 
+SDA -Software defined Access is a modern way of building and managing  networks that uses software to automate tasks, rather than manually configuring switch and router
+
+The advantages are 
+
+	Faster Setup: Deploys networks in minutes instead of weeks.
+
+	Better Security: Automatically applies consistent security policies everywhere.
+
+	Simplicity: It eliminates complex, manual configuration
+
+SD-Access uses three planes: 
+
+	Management plane->configure and monitor the network
+
+	Control plane->decide where devices are located using LISP (Locator/ID Separation 	Protocol)It helps devices move without changing IP. It improves scalability and 	flexibility.
+
+	Data plane ->Actually forwards user traffic.
+ 
+Fabric is a software-defined network architecture. where multiple network devices to work as one system.
+
+The Underlay is the physical  network [routers,switches ,cables] and The Overlay is the virtual network , independent of hardware
+
+It is centrally managed by Cisco DNA Center.        
+
+Fabric nodes : edge node->connect users & devices, border node->manage traffic with external networks, control node->track of devices and help route it
+ 
+DNAC is the brain of SD-Access network.
+
+It controls switches, routers, and access points from one place .Its centralized.
+
+It creates and manages SD-Access Fabric.
+
+It monitors network health and performance.
+
+It integrates with ISE for security and authentication
+ 
+SE Identity Services Engine is a Cisco Identity Services Engine
+
+It is a network access control (NAC) solution.
+
+AAA (Authentication, Authorization, Accounting) .It authenticates users and devices, provides authorization.
+
+It applies security policies based on role based identity.
+
+ISE Node ->server where ISE is installed (Single , distributed)
+ 
+ 
+ 

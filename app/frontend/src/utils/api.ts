@@ -529,6 +529,7 @@ export interface InterviewRoom {
   difficulty: 'EASY' | 'MEDIUM' | 'HARD';
   language: string;
   status: 'ACTIVE' | 'COMPLETED';
+  callId?: string;
   hostId: string;
   participantId?: string;
   messages: Array<{ sender: string; text: string; timestamp: string }>;

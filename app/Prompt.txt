@@ -1,0 +1,630 @@
+You are a senior FAANG-level principal engineer and full-stack architect.
+
+Your task: Design and implement a production-grade live coding interview platform called **Standor** using a **MERN + TypeScript** stack and real-time collaboration. The output must be a professional, industry-standard web application suitable for large tech companies.
+
+You are allowed to generate:
+- Full repository structure (frontend + backend).
+- Source code files.
+- Configuration files (Docker, Kubernetes manifests, ESLint/Prettier, CI).
+- Schema and API definitions.
+- Detailed comments and minimal documentation where needed.
+
+You are NOT allowed to:
+- Change the core product scope or feature set.
+- Switch major technologies without very strong reasons; prefer to stay within the stack below.
+
+=====================================================
+1. GLOBAL REQUIREMENTS & QUALITY BAR
+=====================================================
+
+Role & standards:
+- Act as a principal engineer at a FAANG company.
+- Prioritize correctness, security, robustness, observability, and maintainability.
+- Use clean layering: domain models, data access, services, controllers, and transport (HTTP/Socket.IO).
+- Provide strong typing end-to-end with TypeScript (no `any` except where absolutely unavoidable).
+- Structure code to be testable; include unit/integration test scaffolding.
+
+Non-functional requirements:
+- Multi-tenant by organization.
+- Horizontally scalable (frontends, backends, and workers).
+- Secure by default (RBAC, rate limiting, audit logs, secrets via env).
+- Production-ready observability (structured logging, metrics hooks, error tracking integration points).
+- CI/CD-ready directory and config layout.
+
+=====================================================
+2. TECHNOLOGY STACK (HARD CONSTRAINTS)
+=====================================================
+
+Frontend:
+- React + Vite + TypeScript.
+- Tailwind CSS + DaisyUI for styling and a high-contrast black/white/grey-only theme.
+- Monaco Editor (via @monaco-editor/react or similar) as the code editor.
+- Socket.IO client for real-time collaboration, chat, and signaling.
+- WebRTC (native APIs) for video/audio/screen-share.
+- State management: React Query + lightweight context/hooks; avoid heavy global stores unless clearly justified.
+
+Backend:
+- Node.js + Express + TypeScript.
+- MongoDB with Mongoose ODM.
+- Redis (Upstash-compatible) for:
+  - BullMQ job queues.
+  - Socket.IO adapter (for horizontal scaling).
+  - Rate limiting counters.
+- Socket.IO server for:
+  - Real-time code collaboration.
+  - Chat.
+  - Presence.
+  - WebRTC signaling messages.
+- node-cron for scheduled tasks.
+
+Code execution:
+- Use **Piston API v2** for code execution (`/api/v2/execute`) for all supported languages.
+- Backend acts as the single trusted caller to Piston; never call it from the frontend.
+
+AI integration:
+- Use HTTP APIs for **DeepSeek / OpenRouter / Ollama**.
+- Design AI integration so providers can be swapped by configuration.
+- AI usage:
+  - Post-interview static analysis.
+  - Optional live non-spoiler hints.
+
+Infra & DevOps:
+- MongoDB Atlas for primary database.
+- Redis (Upstash or compatible) for queues, Socket.IO adapter, rate limits.
+- Docker for all services.
+- Kubernetes manifests/Helm chart for:
+  - Frontend deployment.
+  - Backend/API deployment.
+  - Worker deployment (BullMQ).
+  - Redis connection configs and secrets.
+- Logging via pino or winston.
+- Hooks for metrics (e.g., Prometheus style) but you can stub metric emitters.
+
+=====================================================
+3. CORE DOMAIN MODELS (MONGOOSE)
+=====================================================
+
+Design TypeScript interfaces + Mongoose schemas/models for at least:
+
+- User
+  - _id, email, passwordHash, name.
+  - roles: [ "recruiter", "interviewer", "candidate", "admin" ].
+  - orgId (Organization reference).
+  - login metadata (lastLoginAt, failedLoginCount, lockoutUntil, createdAt, updatedAt).
+
+- Organization
+  - _id, name, slug, settings (RBAC rules, branding options, quotas).
+  - createdAt, updatedAt.
+
+- InterviewRoom
+  - _id, orgId, title, company, difficulty, durationMinutes.
+  - primaryLanguage, languagesAllowed.
+  - problemIds used in this room.
+  - status: "waiting" | "live" | "paused" | "completed" | "archived".
+  - scheduledStartAt, startedAt, endedAt.
+  - participants: [{ userId, role, joinedAt, leftAt }].
+  - settings: flags like allowHints, recordEvents, recordVideoMetadataRef (not actual video file).
+  - createdBy (recruiter or interviewer).
+
+- Problem
+  - _id, orgId, title, description (Markdown/HTML-safe).
+  - difficulty, tags.
+  - visibleTests: [{ input, expectedOutput, explanation? }].
+  - hiddenTests: [{ input, expectedOutput }].
+  - defaultLanguage, starterCode per language.
+  - attachmentUrl(s) for PDFs / diagrams.
+  - createdBy, createdAt, updatedAt.
+
+- CodeSnapshot
+  - _id, roomId, orgId, userId (who triggered save).
+  - files: [{ name, language, content }].
+  - createdAt.
+  - isFinal (for final snapshot when interview ends).
+
+- Message
+  - _id, roomId, orgId, senderId.
+  - type: "text" | "code" | "system".
+  - body (text), codeSnippet?, language?.
+  - createdAt.
+  - systemType? (“join”, “leave”, “ai-analysis-complete”, etc).
+
+- Analysis (AI Reports)
+  - _id, roomId, orgId, candidateId.
+  - problemId(s).
+  - provider: "deepseek" | "openrouter" | "ollama".
+  - rawResponse (JSON).
+  - structured:
+    - timeComplexityBefore, timeComplexityAfter.
+    - spaceComplexity.
+    - bugList: [{ description, severity, suggestedFix }].
+    - styleScore, readabilityScore.
+    - improvementHints: string[].
+  - humanNotes: [{ recruiterId, note, createdAt }].
+  - createdAt, updatedAt.
+
+- EventLog
+  - _id, roomId, orgId.
+  - events: append-only array or compressed segments:
+    - type: "editor-delta" | "cursor" | "file-change" | "chat" | "room-state" | "system".
+    - payload (strongly typed TS union).
+    - timestamp, actorId.
+
+- AuditLog
+  - _id, orgId.
+  - action: "role-change" | "ai-rerun" | "recording-download" | "org-settings-change" | etc.
+  - actorId, targetId, targetType (User/Org/Room/etc).
+  - metadata, createdAt.
+  - immutable (no updates/deletes).
+
+You should:
+- Provide Mongoose schema definitions with TypeScript typings.
+- Split model definitions into `backend/src/models/*.ts`.
+- Expose reusable TypeScript domain types in `backend/src/types/domain/*.ts` for sharing between layers.
+
+=====================================================
+4. AUTH, USERS, ORGANIZATIONS
+=====================================================
+
+Auth flows:
+- Email+password signup/login with hashed passwords (bcrypt or argon2).
+- Google OAuth login using Passport or a custom OIDC client.
+- JWT-based or signed-cookie-based sessions (choose one and justify briefly in comments).
+- Middleware for:
+  - `requireAuth`.
+  - `requireRole` (e.g., recruiter, admin).
+  - `requireOrgAccess`.
+
+Security:
+- Rate limiting on auth endpoints (Redis-backed counters; per IP + per user).
+- Account lockouts after configurable failed attempts.
+- Security-related audit logs (password change, new login, failed lockouts).
+- CSRF and CORS properly configured for SPA + API setup.
+
+Org multi-tenancy:
+- All major resources scoped by `orgId`.
+- Ensure queries always filter by `orgId` derived from authenticated user and/or route parameters.
+
+API endpoints (Express):
+- `POST /api/auth/signup`
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `POST /api/auth/refresh` (if JWT refresh tokens are used)
+- `GET  /api/users/me`
+- `GET  /api/orgs` (for admins)
+- `POST /api/orgs` (create org, admin only)
+- `PATCH /api/orgs/:orgId` (admin only)
+
+=====================================================
+5. INTERVIEW ROOMS & LIFECYCLE
+=====================================================
+
+Interview room CRUD:
+- Recruiters/interviewers:
+  - `POST   /api/rooms`
+  - `GET    /api/rooms`
+  - `GET    /api/rooms/:roomId`
+  - `PATCH  /api/rooms/:roomId`
+  - `DELETE /api/rooms/:roomId` (soft-delete or archive)
+- Include fields: title, company, difficulty, duration, languages, problems, scheduled time, settings.
+
+Join links & lobby:
+- Candidate/interviewer join via unique URL: `/room/:roomId`.
+- Backend validates:
+  - Room exists and belongs to their organization.
+  - User has a valid role and is invited (if invite-only).
+- Lobby screen behavior:
+  - Mic/cam permissions + preview (WebRTC getUserMedia).
+  - Latency ping using Socket.IO.
+  - “Ready” toggle per side, synced to backend.
+
+Room states:
+- State machine stored on InterviewRoom:
+  - "waiting" -> "live" -> ("paused" <-> "live") -> "completed" -> "archived".
+- Enforce transitions in service layer; invalid transitions should be rejected.
+- Socket.IO broadcasts state changes to all participants.
+
+=====================================================
+6. REAL-TIME CODE COLLABORATION (MONACO + SOCKET.IO)
+=====================================================
+
+Editor:
+- React wrapper around Monaco Editor in TypeScript mode by default.
+- Support multiple languages (JS/TS, Python, Java, C++, etc.) based on room/problem config.
+
+Document syncing:
+- Use Yjs or a simple OT/CRDT layer on the frontend for local collaborative state.
+- Over Socket.IO:
+  - Room-level namespace, e.g., `/room/:roomId`.
+  - Events:
+    - `code:init` (initial snapshot).
+    - `code:delta` (editor changes).
+    - `code:fileChange` (switching active file).
+    - `presence:cursor` (cursor positions/selections).
+    - `presence:status` (joined/left/ready).
+
+Server behavior:
+- Primarily broadcast and store periodic snapshots (no heavy OT logic on server).
+- Periodic or explicit snapshot save route:
+  - `POST /api/rooms/:roomId/snapshots` -> CodeSnapshot.
+
+Multiple files:
+- Room-level "file tree":
+  - Maintained in memory and persisted via snapshots.
+  - Supports add/delete/rename file (within room session).
+- Sync current file selection and file list across participants.
+
+Autosave:
+- Frontend triggers:
+  - Every 30 seconds.
+  - On explicit “Save now”.
+- Backend stores snapshots in CodeSnapshot collection.
+
+=====================================================
+7. CODE EXECUTION (PISTON API)
+=====================================================
+
+Run code:
+- Frontend:
+  - “Run” button sends:
+    - roomId, problemId, selected file(s), language, stdin (sample input).
+- Backend:
+  - Validates user access and room state.
+  - Maps requested language to Piston runtime/language.
+  - Calls Piston `/api/v2/execute` with given code/files and stdin.
+  - Stores raw execution result for analytics (not full stdout if too large; consider truncated).
+  - Returns stdout, stderr, runtime, and exit code.
+
+Test cases:
+- `Problem` documents contain visible and hidden tests.
+- Backend run endpoint:
+  - Executes code against:
+    - Visible tests: returned to both candidate and interviewer.
+    - Hidden tests: detailed results only visible to interviewer/backend analytics.
+- Design:
+  - `POST /api/rooms/:roomId/problems/:problemId/run` for running tests.
+
+Execution panel:
+- React console panel:
+  - Shows stdout, stderr, runtime, memory (if available), and per-test pass/fail.
+  - Clear separation of visible vs summary stats (hidden).
+
+=====================================================
+8. AI CODE ANALYSIS (DEEPSEEK / OPENROUTER / OLLAMA)
+=====================================================
+
+Post-interview analysis:
+- When a room transitions to "completed":
+  - Enqueue a BullMQ job on an `ai-analysis` queue.
+  - Worker:
+    - Loads final CodeSnapshot + Problem details + run history.
+    - Sends structured prompt to configured AI provider.
+    - Parses response into `Analysis` document.
+    - Emits a system chat event “AI analysis ready”.
+
+AI providers:
+- Abstract provider interface:
+  - `analyzeSolution({ code, language, problem, runStats }): Promise<AnalysisResult>`.
+- Concrete implementations for:
+  - DeepSeek via HTTP.
+  - OpenRouter (router to different model).
+  - Ollama (local or remote instance).
+- Provider selection by config environment variable.
+
+AI panel (frontend):
+- In Room “Review” view:
+  - Show complexity (before/after if applicable), bug count, style score, improvement hints.
+  - Allow recruiters to:
+    - Add human notes.
+    - Override or supplement AI scores.
+
+Optional live hints:
+- UI toggle for interviewer: “AI hints enabled”.
+- Backend periodic job:
+  - At intervals (e.g., every N seconds/minutes) when enabled:
+    - Sends current snapshot + problem summary to AI provider.
+    - Returns brief non-spoiler hint.
+  - Stream hints to “AI hints” sidebar via Socket.IO.
+
+=====================================================
+9. VIDEO, AUDIO, SCREEN SHARE (WEBRTC + SOCKET.IO)
+=====================================================
+
+1:1 video:
+- WebRTC peer connections between interviewer and candidate.
+- Socket.IO channel for signaling:
+  - `webrtc:offer`, `webrtc:answer`, `webrtc:ice-candidate`, `webrtc:hangup`.
+- Video tiles rendered beside the editor.
+
+Media controls:
+- Mute/unmute audio, enable/disable camera per peer.
+- Frontend uses per-connection track management.
+
+Screen sharing:
+- Candidate can share screen/tab using `getDisplayMedia`.
+- Stream displayed to interviewer while editor remains interactive.
+
+Network indicators:
+- Use `getStats()` from WebRTC:
+  - Compute simple quality indicator (green/amber/red) from bitrate, packet loss, RTT.
+- Display indicator icon with tooltip.
+
+=====================================================
+10. CHAT & COLLABORATION UTILITIES
+=====================================================
+
+Chat:
+- Socket.IO events:
+  - `chat:message` (text, code snippet, system).
+- Persist in Message collection for each room.
+- Differentiate:
+  - Text messages.
+  - Code snippet messages (syntax-highlighted in UI).
+  - System messages (join/leave, AI completed, interview ended).
+
+In-UI utilities:
+- Display user avatars/initials and roles with each message.
+- Support basic markdown or code blocks in chat.
+
+=====================================================
+11. PROBLEM LIBRARY & RECRUITER UI
+=====================================================
+
+Problem management:
+- CRUD endpoints:
+  - `GET    /api/problems`
+  - `POST   /api/problems`
+  - `GET    /api/problems/:problemId`
+  - `PATCH  /api/problems/:problemId`
+  - `DELETE /api/problems/:problemId`
+- Problems scoped by `orgId`.
+
+Problem packs:
+- Optional "packs":
+  - Collections like “Amazon L5”, “Dynamic Programming Pack”.
+- Model:
+  - ProblemPack: { orgId, title, description, problemIds, createdBy }.
+
+Attachments:
+- PDFs / diagrams:
+  - Store file in GridFS or external object storage.
+  - Save `attachmentUrl` on Problem.
+  - Frontend viewer (embedded PDF viewer or new tab).
+
+Recruiter dashboard:
+- UI for:
+  - Filtering/searching problems by difficulty, tags, text search.
+  - Managing packs.
+
+=====================================================
+12. RECORDING & REPLAY (EVENT LOGS)
+=====================================================
+
+Event logging:
+- For each room, log:
+  - Editor deltas.
+  - Cursor movements.
+  - File changes.
+  - Chat messages.
+  - Room state changes.
+- Events appended to EventLog collection.
+- Optimize for:
+  - Write-append performance.
+  - Reasonable replay performance (chunking/compression allowed).
+
+Replay player:
+- Frontend “Replay” mode:
+  - Reconstruct code state and chat over time using:
+    - Initial snapshot.
+    - Sequence of EventLog events.
+  - Controls:
+    - Play, pause, seek, speed.
+  - Timeline scrubber.
+
+=====================================================
+13. RECRUITER DASHBOARD & ANALYTICS
+=====================================================
+
+Views:
+- Interview list with filters:
+  - date range, company, difficulty, interviewer, status.
+- Per-room metrics:
+  - completion time.
+  - number of code runs.
+  - visible+hidden test pass rate.
+  - AI complexity/style scores.
+
+Org-level analytics:
+- Aggregations:
+  - pass rate by company.
+  - distribution by problem difficulty.
+  - success rate by language.
+  - per-interviewer stats.
+- Backend:
+  - Use MongoDB aggregation pipelines.
+- Export:
+  - CSV export endpoint:
+    - `GET /api/analytics/export?type=...`.
+
+=====================================================
+14. EMAIL & NOTIFICATIONS
+=====================================================
+
+Email service:
+- Use any SMTP or Resend-like provider abstracted behind a service class:
+  - `EmailService.sendInvite(...)`
+  - `EmailService.sendReport(...)`
+  - `EmailService.sendSecurityAlert(...)`
+
+Queues:
+- BullMQ queues:
+  - `email` queue for sending:
+    - Interview invites (with join URL).
+    - Post-interview reports.
+    - Security notifications.
+- Jobs:
+  - `interview-invite`
+  - `post-interview-report`
+  - `security-alert`
+
+Templates:
+- HTML email templates for:
+  - Invite email (with join URL and calendar instructions).
+  - Post-interview report summary.
+  - Security events (new device login, password change).
+
+=====================================================
+15. BACKGROUND JOBS, SCHEDULING & RATE LIMITING
+=====================================================
+
+BullMQ usage:
+- Queues:
+  - `ai-analysis`
+  - `email`
+  - `snapshot-archive`
+  - `metrics-aggregation`
+- Worker processes:
+  - Dedicated worker per queue or combined worker with multiple processors.
+- Use Redis for connection (Upstash compatible).
+
+node-cron jobs:
+- Periodic tasks:
+  - Clean old rooms/snapshots (based on retention config).
+  - Rotate logs or archival triggers.
+  - Nightly recalculation of pre-aggregated analytics for faster dashboard loads.
+
+Rate limiting & abuse control:
+- Redis-backed IP/user-based rate limiting for:
+  - Auth endpoints.
+  - Run-code endpoint.
+  - AI analysis endpoints.
+  - Socket.IO connection attempts.
+- Use configurable thresholds per environment.
+
+=====================================================
+16. SECURITY, OBSERVABILITY & DEVOPS
+=====================================================
+
+RBAC:
+- Middleware enforcing:
+  - Only recruiters can create rooms, manage problems, see AI reports.
+  - Only admins can manage org-level settings and roles.
+- Ensure checks in every relevant route & Socket.IO handler.
+
+Audit logging:
+- Write immutable AuditLog entries for:
+  - Role changes.
+  - AI analysis re-runs.
+  - Recording/replay data downloads.
+  - Org settings changes.
+
+Monitoring & SLOs:
+- Logging:
+  - Use structured logging (pino/winston) with correlation IDs per request/room.
+- Metrics:
+  - Hooks for:
+    - Editor event p99 latency.
+    - Socket.IO connection success/failure rates.
+    - AI job latency and error rates.
+- Error tracking:
+  - Pluggable integration (Sentry-like) with a central handler.
+
+Docker & K8s:
+- Dockerfiles:
+  - `frontend/Dockerfile` (Vite build + static server).
+  - `backend/Dockerfile` (Node.js, TS build, runs API and Socket.IO).
+  - `worker/Dockerfile` (BullMQ workers).
+- K8s manifests or Helm:
+  - Deployments for frontend, backend, worker.
+  - Services (LoadBalancer/Ingress for frontend+backend).
+  - ConfigMaps/Secrets for env (DB URIs, Redis URLs, AI API keys).
+  - Readiness/liveness probes suitable for production.
+
+=====================================================
+17. FRONTEND UX, THEME & COMPONENTS
+=====================================================
+
+UI theme:
+- Tailwind + DaisyUI configured for:
+  - Black / bright white / grey-only palette (no accent colors).
+  - High-contrast, minimal, “FAANG-like” look.
+
+Core reusable components:
+- RoomCard
+- EditorShell (Monaco + file tree + run console)
+- ParticipantList
+- ChatPanel
+- VideoPanel
+- AIAnalysisPanel
+- DashboardCard
+- AnalyticsCharts (basic charts, can use a light charting lib or simple SVG)
+
+Views/pages:
+- Auth pages (login, signup).
+- Org selection/admin.
+- Recruiter dashboard (interviews list, analytics).
+- Problem library CRUD.
+- Room lobby.
+- Live interview room (editor, video, chat, hints, tests).
+- Review/replay view.
+
+=====================================================
+18. PROJECT STRUCTURE & CONVENTIONS
+=====================================================
+
+Monorepo structure (suggestion, you may refine):
+
+- `/frontend`
+  - Vite + React + TS app.
+  - `src/components`, `src/pages`, `src/hooks`, `src/api`, `src/styles`.
+- `/backend`
+  - Express app, Socket.IO, Mongoose models, BullMQ producers.
+  - `src/config`, `src/models`, `src/routes`, `src/controllers`, `src/services`, `src/workers`, `src/utils`.
+- `/infra`
+  - Dockerfiles, K8s manifests/Helm charts, docker-compose for local dev.
+- Root-level:
+  - Shared TS types (if you choose `packages/shared`).
+  - ESLint/Prettier configs.
+  - CI config (GitHub Actions or similar).
+
+Conventions:
+- Prefer async/await and centralized error handling.
+- Validate request bodies with a schema validator (e.g., Zod or Joi) at the edge.
+- Keep controllers thin; put business logic into services.
+- Add TODO comments where implementation is non-trivial and requires human follow-up.
+
+=====================================================
+19. EXECUTION STRATEGY FOR YOU (THE AI)
+=====================================================
+
+Follow a phased approach:
+
+Phase 1 – Scaffold:
+- Create the monorepo structure with frontend, backend, worker, and infra.
+- Define all TypeScript types, Mongoose schemas, and primary Express route handlers as stubs.
+- Set up Socket.IO namespaces and event type definitions.
+- Set up basic auth flow and protected routes with mocked responses.
+- Add Dockerfiles and basic K8s manifests.
+
+Phase 2 – Core flows:
+- Implement full auth/org multi-tenancy.
+- Implement interview room lifecycle, lobby, and live room basics (no AI yet).
+- Integrate Monaco editor, real-time code collaboration (Socket.IO), and snapshots.
+- Integrate Piston-based code execution and test case running.
+
+Phase 3 – Enhancements:
+- Add AI analysis (post-interview) and optional live hints.
+- Add full recruiter dashboard, analytics, and CSV export.
+- Implement recording & replay via EventLog.
+- Finish email flows via a queue (BullMQ) and templates.
+
+Phase 4 – Hardening:
+- Implement rate limiting, audit logging, logging/metrics hooks, and security polish.
+- Improve UX, error states, and loading states.
+- Add important tests (unit + basic integration) and CI workflow.
+
+At each phase:
+- Ensure the TypeScript builds cleanly.
+- Ensure linting passes.
+- Provide notes on what is implemented and what remains.
+
+Now, start by generating the complete repository structure, key configuration files, and stubbed implementations according to this spec.

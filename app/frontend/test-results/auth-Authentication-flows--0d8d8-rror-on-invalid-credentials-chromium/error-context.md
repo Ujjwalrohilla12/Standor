@@ -13,40 +13,43 @@
       - text: Continue with Google
     - generic [ref=e20]: or
     - generic [ref=e22]:
-      - generic [ref=e23]:
-        - generic [ref=e24]: Email
-        - generic [ref=e25]:
-          - img [ref=e26]
-          - textbox "Email" [ref=e29]:
+      - alert [ref=e23]: Login failed. Please try again.
+      - generic [ref=e24]:
+        - generic [ref=e25]: Email
+        - generic [ref=e26]:
+          - img [ref=e27]
+          - textbox "Email" [ref=e30]:
             - /placeholder: you@company.com
-      - generic [ref=e30]:
-        - generic [ref=e31]: Password
-        - generic [ref=e32]:
-          - img [ref=e33]
-          - textbox "Password" [ref=e36]:
+            - text: nonexistent@example.com
+      - generic [ref=e31]:
+        - generic [ref=e32]: Password
+        - generic [ref=e33]:
+          - img [ref=e34]
+          - textbox "Password" [ref=e37]:
             - /placeholder: ••••••••••••
-          - button "Show password" [ref=e37] [cursor=pointer]:
-            - img [ref=e38]
-      - link "Forgot password?" [ref=e42] [cursor=pointer]:
+            - text: wrongpassword
+          - button "Show password" [ref=e38] [cursor=pointer]:
+            - img [ref=e39]
+      - link "Forgot password?" [ref=e43] [cursor=pointer]:
         - /url: /forgot-password
-      - button "Sign In" [ref=e43] [cursor=pointer]:
+      - button "Sign In" [ref=e44] [cursor=pointer]:
         - text: Sign In
-        - img [ref=e44]
-    - paragraph [ref=e46]:
+        - img [ref=e45]
+    - paragraph [ref=e47]:
       - text: Don't have an account?
-      - link "Create account" [ref=e47] [cursor=pointer]:
+      - link "Create account" [ref=e48] [cursor=pointer]:
         - /url: /register
-  - generic [ref=e50]:
-    - img [ref=e51]
-    - generic [ref=e53]:
-      - paragraph [ref=e54]:
+  - generic [ref=e51]:
+    - img [ref=e52]
+    - generic [ref=e54]:
+      - paragraph [ref=e55]:
         - text: We use essential cookies for authentication and session management. No tracking cookies are used.
-        - link "Privacy Policy" [ref=e55] [cursor=pointer]:
+        - link "Privacy Policy" [ref=e56] [cursor=pointer]:
           - /url: /privacy
-      - generic [ref=e56]:
-        - button "Accept" [ref=e57] [cursor=pointer]
-        - button "Decline" [ref=e58] [cursor=pointer]
-    - button [ref=e59] [cursor=pointer]:
-      - img [ref=e60]
+      - generic [ref=e57]:
+        - button "Accept" [ref=e58] [cursor=pointer]
+        - button "Decline" [ref=e59] [cursor=pointer]
+    - button [ref=e60] [cursor=pointer]:
+      - img [ref=e61]
   - region "Notifications alt+T"
 ```

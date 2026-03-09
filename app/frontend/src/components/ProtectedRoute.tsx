@@ -11,14 +11,24 @@ interface ProtectedRouteProps {
 export default function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
   const { user, token, setAuth, logout } = useStore();
   const location = useLocation();
-  const [checking, setChecking] = useState(!user);
+  const [checking, setChecking] = useState(!user && !!token);
 
   useEffect(() => {
     if (!user && token) {
-      // We have a token but no user — try to fetch user info
       api.get('/auth/me')
         .then(({ data }) => {
-          setAuth(data.user, token);
+          // Backend returns { user: { _id, email, name, role, ... } }
+          const u = data.user ?? data;
+          setAuth({
+            id: u._id ?? u.id,
+            _id: u._id ?? u.id,
+            email: u.email,
+            name: u.name,
+            role: u.role ?? 'USER',
+            avatar: u.avatar,
+            emailVerified: u.emailVerified,
+            mfaEnabled: u.mfaEnabled ?? false,
+          }, token);
           setChecking(false);
         })
         .catch(() => {
@@ -47,7 +57,7 @@ export default function ProtectedRoute({ children, requiredRole }: ProtectedRout
     return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   }
 
-  if (requiredRole && user.roles && !user.roles.includes(requiredRole)) {
+  if (requiredRole && user.role !== requiredRole) {
     return <Navigate to="/dashboard" replace />;
   }
 

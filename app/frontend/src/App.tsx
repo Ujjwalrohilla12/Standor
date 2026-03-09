@@ -76,6 +76,9 @@ const Admin = lazy(() => import('./pages/Admin'));
 const DpiTools = lazy(() => import('./pages/DpiTools'));
 const Problems = lazy(() => import('./pages/Problems'));
 const Replay = lazy(() => import('./pages/Replay'));
+const Lobby = lazy(() => import('./pages/Lobby'));
+const JoinMeeting = lazy(() => import('./pages/JoinMeeting'));
+const MeetingRoom = lazy(() => import('./pages/MeetingRoom'));
 
 // ───── Apply accessibility on load ─────
 initAccessibility();
@@ -136,6 +139,8 @@ function AppContent() {
             <Routes>
               {/* Marketing */}
               <Route path="/" element={<MarketingRoute><Landing /></MarketingRoute>} />
+              <Route path="/join" element={<JoinMeeting />} />
+              <Route path="/meeting/:code" element={<MeetingRoom />} />
               <Route path="/demo" element={<Demo />} />
               <Route path="/about" element={<MarketingRoute title="About — Standor"><About /></MarketingRoute>} />
               <Route path="/features" element={<MarketingRoute title="Features — Standor"><Features /></MarketingRoute>} />
@@ -185,6 +190,7 @@ function AppContent() {
               <Route path="/session" element={<ProtectedRoute><SessionView /></ProtectedRoute>} />
               <Route path="/session/:id" element={<ProtectedRoute><SessionView /></ProtectedRoute>} />
               <Route path="/replay/:id" element={<ProtectedRoute><Replay /></ProtectedRoute>} />
+              <Route path="/lobby/:roomId" element={<ProtectedRoute><Lobby /></ProtectedRoute>} />
               <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
               <Route path="/team-rooms" element={<ProtectedRoute><TeamRoom /></ProtectedRoute>} />

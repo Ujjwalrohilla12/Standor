@@ -1,0 +1,223 @@
+Standor is a production-ready Google Meet + VS Code integration for technical interviews: seamless video/audio/screen-share like Meet, full Monaco/VS Code-style live collaborative editor, interviewer sets custom problems (no pre-built library), post-interview AI analyzes candidate code/solutions (no hints during session), recruiter dashboard for metrics. Built on MERN + TypeScript (React/Vite frontend, Node/Express backend, MongoDB/Mongoose, Socket.io, Yjs/CRDT, WebRTC, Piston execution, OpenAI/DeepSeek, Resend emails, Vercel Blob CDN, Redis, Docker-ready). Black/white/grey UI only.
+​
+
+Core Flow (Meet + VS Code)
+Interviewer creates room with custom problem text → candidate joins via link → Meet-style video tiles + VS Code Monaco editor syncs live → interviewer screenshares if needed → end session → AI privately analyzes candidate's final code (Big-O, bugs, style, edge cases) → emails report to both (no candidate hints during).
+​
+
+1. Auth & Access
+Google OAuth + email/password signup
+
+Recruiter/interviewer signs up/logs in; candidate uses guest name or optional Google for reports.
+​
+
+RBAC roles
+
+Interviewer creates/owns rooms; candidate joins only; no hints visible to candidate.
+​
+
+2. Room Creation (Interviewer Custom Problems)
+Custom problem setup
+
+Interviewer pastes custom problem text (no library/packs); optional PDF upload to Vercel Blob CDN.
+​
+
+Room config
+
+Title, duration, language (TS/Python/JS), scheduled start; generates join link.
+​
+
+3. Google Meet-Style Video/Audio
+WebRTC 1:1 video/audio
+
+Floating video tiles (interviewer/candidate), mute/camera toggle, connection quality indicator.
+​
+
+Screen share
+
+Candidate shares tab/screen (e.g., local VS Code); interviewer sees PiP.
+​
+
+4. VS Code/Monaco Live Editor
+Real-time Monaco editor
+
+Full VS Code-like: syntax highlight, autocomplete, linting, multi-file/tabs, Yjs CRDT sync.
+​
+
+Multi-cursor/presence
+
+Colored cursors/names; typing indicators; follow candidate mode.
+​
+
+Autosave snapshots
+
+Every 30s to Mongo/Blob; undo/redo/time travel replay.
+​
+
+5. Code Execution (No Hints)
+Piston sandbox runner
+
+"Run" button executes code; shows stdout/stderr/runtime; hidden tests only for AI.
+​
+
+No candidate hints
+
+AI silent during session; interviewer-only optional sidebar (toggle hidden).
+​
+
+6. Chat & Utilities
+Socket.io chat
+
+Text messages, code snippets; no AI hints leaked to candidate.
+​
+
+7. AI Post-Interview Analysis (Private)
+AI code review
+
+On end: OpenAI/DeepSeek analyzes final snapshot (complexity, bugs, style, tests, score).
+​
+
+Structured report
+
+JSON: Big-O, bugs/line, suggestions, confidence; no real-time hints.
+​
+
+8. Emails & Reports
+Resend emails
+
+Both get report (candidate sees anonymized/safe version); interviewer full details.
+​
+
+9. Recruiter Dashboard
+Interview metrics
+
+List rooms, pass rates, avg time/score, per-problem stats.
+​
+
+10. Infra/Scaling
+Socket.io + Redis
+
+10K concurrent rooms; Yjs reconnects auto-merge.
+​
+
+Rate limits/security
+
+Per-IP limits; sandboxed exec; org isolation.
+​
+
+All free-tier: Mongo Atlas, Upstash Redis, Vercel Blob, Piston, DeepSeek API.
+
+
+**FAANG recruiters' dream project**: Real technical interviews with live collaboration, AI code analysis, and automated feedback. Every interviewer instantly relates—"I conducted 50 interviews last year using whiteboard tools."
+
+## **Core User Journey**
+```
+1. Recruiter creates "Amazon L5 Backend" room (5min setup)
+2. Candidate joins → Live Monaco Editor + Socket.io chat
+3. Real-time collaboration → AI analyzes code live
+4. Post-interview → Both get detailed feedback emails
+5. Recruiter dashboard: Hiring pipeline velocity metrics
+```
+
+
+## **Key Features Implementation**
+
+### **1. Real-Time Interview Room (Socket.io)**
+```typescript
+// Backend: socket.ts
+io.on('connection', (socket) => {
+socket.on('join-room', async ({ roomId, role, name }) => {
+socket.join(roomId)
+socket.to(roomId).emit('participant-joined', { name, role })
+
+// Live cursor sharing
+socket.on('cursor-update', (data) =>
+socket.to(roomId).emit('cursor-update', data)
+)
+
+// Code changes (Yjs CRDT)
+socket.on('editor-change', (delta) =>
+socket.to(roomId).emit('editor-change', delta)
+)
+})
+})
+```
+
+### **2. Monaco Editor Collaboration**
+```tsx
+// Frontend: InterviewRoom.tsx
+<Editor
+height="70vh"
+defaultLanguage="typescript"
+value={code}
+onMount={handleEditorMount}
+beforeMount={monaco => {
+// Yjs + Monaco binding
+yjsDoc = new Y.Doc()
+ytext = yjsDoc.getText('monaco')
+binding = new MonacoBinding(ytext, editor.getModel(), provider)
+}}
+/>
+```
+
+### **3. CDN Content Serving (Vercel Blob)**
+```typescript
+// Upload problem statement PDF
+const blob = await put(`problems/${roomId}/${problemId}.pdf`, file, {
+access: 'public'
+})
+// Served at: https://blob.vercel-storage.com/[hash].pdf
+```
+
+### **4. AI Code Analysis + Email**
+```typescript
+// Backend: analyzeCode.ts
+async function analyzeCode(code: string) {
+const completion = await openai.chat.completions.create({
+model: 'gpt-4o',
+messages: [{
+role: 'user',
+content: `Analyze this code for Big O, bugs, style:\n${code}`
+}]
+})
+
+// Email both participants
+await resend.emails.send({
+from: 'feedback@interviewforge.dev',
+to: [interviewerEmail, candidateEmail],
+subject: 'InterviewForge - Detailed Analysis',
+html: generateReportHTML(completion.choices[0].message.content)
+})
+}
+```
+
+## **System Design Deep Dive (Interview Gold)**
+
+```
+Traffic: 10K concurrent interviews
+QPS: 50K chat messages/min → Redis pub/sub
+Storage: 1TB code snapshots → Vercel Blob + MongoDB GridFS
+Latency: <200ms code collab → Socket.io sticky sessions
+
+Scaling Plan:
+1. Horizontal Socket.io nodes (Redis adapter)
+2. tRPC query batching + React Query caching
+3. CDN edge caching for problem PDFs
+4. MongoDB replica sets + read replicas
+5. Rate limiting (100 req/min per IP)
+```
+
+
+## **Demo Script (2-Minute Interview Killer)**
+
+```
+[Screen Record: Dual perspective split-screen]
+1. Recruiter: "Create Amazon L5 room → Two Sum problem loads"
+2. Candidate joins → Monaco Editor syncs instantly
+3. Live chat: "Try two-pointer approach" → Cursors move together
+4. Candidate codes → AI sidebar: "O(n²) detected → Suggest sort+two-pointer"
+5. Interview ends → Both get emails: "Big O: Improved ✅ | Bugs: 0 | 
+6. Dashboard: "Pass rate by company: Amazon 23%, Google 41%"
+```
+
+standor name for the project , and not interviewforge

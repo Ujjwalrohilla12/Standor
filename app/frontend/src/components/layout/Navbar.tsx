@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, ArrowRight, LogOut, LayoutDashboard, Settings } from 'lucide-react';
+import { Menu, X, ArrowRight, LogOut, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../lib/utils';
 import useStore from '../../store/useStore';
@@ -16,7 +16,6 @@ export function Navbar() {
     const navigate = useNavigate();
     const location = useLocation();
     const { user, token, logout } = useStore();
-    const [isScrolled, setIsScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -26,13 +25,13 @@ export function Navbar() {
         location.pathname.startsWith('/session') ||
         location.pathname.startsWith('/create-session') ||
         location.pathname.startsWith('/problems') ||
-        location.pathname.startsWith('/settings');
+        location.pathname.startsWith('/settings') ||
+        location.pathname.startsWith('/team-rooms') ||
+        location.pathname.startsWith('/replay') ||
+        location.pathname.startsWith('/lobby') ||
+        location.pathname.startsWith('/admin') ||
+        location.pathname.startsWith('/webhooks');
 
-    useEffect(() => {
-        const handleScroll = () => setIsScrolled(window.scrollY > 20);
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
 
     useEffect(() => {
         const handler = (e: MouseEvent) => {
@@ -72,6 +71,7 @@ export function Navbar() {
                         <div className="flex items-center gap-6 mr-6 border-r border-white/10 pr-6">
                             <Link to="/dashboard" className={cn("text-xs font-bold uppercase tracking-widest transition-colors", location.pathname === '/dashboard' ? "text-white" : "text-neutral-500 hover:text-white")}>Dashboard</Link>
                             <Link to="/problems" className={cn("text-xs font-bold uppercase tracking-widest transition-colors", location.pathname === '/problems' ? "text-white" : "text-neutral-500 hover:text-white")}>Problems</Link>
+                            <Link to="/team-rooms" className={cn("text-xs font-bold uppercase tracking-widest transition-colors", location.pathname === '/team-rooms' ? "text-white" : "text-neutral-500 hover:text-white")}>Rooms</Link>
                         </div>
                         <div className="relative" ref={menuRef}>
                             <div
