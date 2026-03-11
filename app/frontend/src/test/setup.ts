@@ -18,8 +18,10 @@ const localStorageMock = (() => {
   };
 })();
 
-global.localStorage = localStorageMock as Storage;
+globalThis.localStorage = localStorageMock as Storage;
 
 // Mock window.location
-delete (window as any).location;
-window.location = { href: '' } as Location;
+Object.defineProperty(window, 'location', {
+  writable: true,
+  value: { href: '' } as Partial<Location>,
+});

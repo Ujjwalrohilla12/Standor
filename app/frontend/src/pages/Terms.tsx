@@ -87,9 +87,9 @@ export default function Terms() {
             <div className="mt-48 p-12 rounded-[3rem] bg-[#0A0A0A] border border-white/10 flex flex-col md:flex-row items-center justify-between gap-8">
               <div>
                 <h3 className="text-xl font-bold text-white mb-2">Need a custom contract?</h3>
-                <p className="text-sm text-neutral-500">Available for Enterprise customers.</p>
+                <p className="text-sm text-white">Available for Enterprise customers.</p>
               </div>
-              <button className="flex items-center gap-2 text-[10px] font-bold text-white uppercase tracking-widest py-4 px-8 rounded-full bg-white text-black hover:bg-neutral-200 transition-all">
+              <button className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest py-4 px-8 rounded-full bg-white text-black hover:bg-neutral-200 transition-all">
                 Contact Legal
                 <ArrowRight size={14} />
               </button>

@@ -34,7 +34,7 @@ describe('API Client Property Tests', () => {
     (window as any).location = { href: '' };
     
     // Mock fetch to prevent actual logout API calls
-    global.fetch = vi.fn(() =>
+    globalThis.fetch = vi.fn(() =>
       Promise.resolve({
         ok: true,
         status: 200,

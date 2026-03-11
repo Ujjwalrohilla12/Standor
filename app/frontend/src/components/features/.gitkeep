@@ -1,0 +1,10 @@
+# Features Components Directory
+
+This directory contains components specific to the FAANG-grade Features page.
+
+## Components:
+- HeroScene.tsx - 3D visualization with React Three Fiber
+- FeatureCard.tsx - Uniform feature card component
+- FeatureGrid.tsx - Responsive grid layout for feature cards
+- ComparisonGrid.tsx - 3-column comparison grid
+- CTASection.tsx - Call-to-action section with primary/secondary buttons

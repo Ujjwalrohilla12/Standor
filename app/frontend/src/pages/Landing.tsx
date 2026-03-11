@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import { Github, Code2, Brain, Terminal, Layers, Play, Check } from 'lucide-react';
+import FAQ from '../components/FAQ';
 
 const CODE_LINES = [
   { code: 'function twoSum(nums: number[], target: number) {', key: 0 },
@@ -245,6 +246,9 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* ── FAQ SECTION ── */}
+      <FAQ />
 
     </main>
   );

@@ -1,63 +1,103 @@
-import { Shield, Lock, Eye, Server, FileCheck, Key, AlertTriangle, Users, CheckCircle2, ArrowRight, ShieldCheck, Database } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import {
+  Shield,
+  Lock,
+  Eye,
+  Server,
+  FileCheck,
+  Key,
+  AlertTriangle,
+  Users,
+  CheckCircle2,
+  ArrowRight,
+  ShieldCheck,
+  Database,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const CONTROLS = [
   {
     icon: Lock,
-    title: 'Encryption in Transit',
-    desc: 'All API and WebSocket traffic is encrypted via TLS 1.2+. HSTS enforced. No unencrypted channels.',
+    title: "Encryption in Transit",
+    desc: "All API and WebSocket traffic is encrypted via TLS 1.2+. HSTS enforced. No unencrypted channels.",
   },
   {
     icon: Database,
-    title: 'Encryption at Rest',
-    desc: 'Interview data, code snapshots, and session metadata are encrypted at rest using AES-256. Bring Your Own Key (BYOK) available for enterprise deployments.',
+    title: "Encryption at Rest",
+    desc: "Interview data, code snapshots, and session metadata are encrypted at rest using AES-256. Bring Your Own Key (BYOK) available for enterprise deployments.",
   },
   {
     icon: Server,
-    title: 'Sandboxed Execution',
-    desc: 'Candidate code runs in isolated Piston containers with strict memory, CPU, and network limits. A malicious submission cannot affect other sessions or users.',
+    title: "Sandboxed Execution",
+    desc: "Candidate code runs in isolated Piston containers with strict memory, CPU, and network limits. A malicious submission cannot affect other sessions or users.",
   },
   {
     icon: Users,
-    title: 'Role-Based Access Control',
-    desc: 'Granular RBAC with user, org-admin, and platform-admin roles. Every API endpoint enforces permission checks independently.',
+    title: "Role-Based Access Control",
+    desc: "Granular RBAC with user, org-admin, and platform-admin roles. Every API endpoint enforces permission checks independently.",
   },
   {
     icon: ShieldCheck,
-    title: 'SSO & MFA',
-    desc: 'OIDC/SAML SSO for enterprise identity providers. TOTP and hardware key (WebAuthn/FIDO2) MFA available for all accounts.',
+    title: "SSO & MFA",
+    desc: "OIDC/SAML SSO for enterprise identity providers. TOTP and hardware key (WebAuthn/FIDO2) MFA available for all accounts.",
   },
   {
     icon: FileCheck,
-    title: 'Immutable Audit Logs',
-    desc: 'Every authentication event, permission change, export, and policy modification is logged to an append-only audit trail with timestamp and IP.',
+    title: "Immutable Audit Logs",
+    desc: "Every authentication event, permission change, export, and policy modification is logged to an append-only audit trail with timestamp and IP.",
   },
   {
     icon: Eye,
-    title: 'Privacy by Design',
-    desc: 'Code and chat data are private to room participants. Sessions are never shared with third parties. Retention policies and full GDPR-compliant deletion are first-class features.',
+    title: "Privacy by Design",
+    desc: "Code and chat data are private to room participants. Sessions are never shared with third parties. Retention policies and full GDPR-compliant deletion are first-class features.",
   },
   {
     icon: Key,
-    title: 'API Key Security',
-    desc: 'API keys are shown only once at creation time. Keys are stored as SHA-256 hashes. Scoped, revocable, and audited.',
+    title: "API Key Security",
+    desc: "API keys are shown only once at creation time. Keys are stored as SHA-256 hashes. Scoped, revocable, and audited.",
   },
   {
     icon: AlertTriangle,
-    title: 'Abuse & Anomaly Detection',
-    desc: 'Server-side rate limiting and behaviour analysis flags abnormal usage automatically. Webhook alerts for suspicious activity patterns are configurable per organization.',
+    title: "Abuse & Anomaly Detection",
+    desc: "Server-side rate limiting and behaviour analysis flags abnormal usage automatically. Webhook alerts for suspicious activity patterns are configurable per organization.",
   },
 ];
 
 const COMPLIANCE = [
-  { label: 'TLS 1.2+', detail: 'All endpoints enforce minimum TLS 1.2 with strong cipher suites' },
-  { label: 'GDPR', detail: 'Data export and deletion endpoints available; consent records stored' },
-  { label: 'Argon2id', detail: 'Passwords hashed with Argon2id, 64 MB memory cost, time cost 3' },
-  { label: 'HIBP Check', detail: 'New passwords checked against Have I Been Pwned k-anonymity API' },
-  { label: 'CSRF Protection', detail: 'SameSite cookies and CSRF tokens on all state-mutating endpoints' },
-  { label: 'Rate Limiting', detail: '300 requests / 15 min per IP; auth endpoints have stricter limits' },
-  { label: 'Input Validation', detail: 'All user input sanitized and validated server-side before processing' },
-  { label: 'Secret Management', detail: 'Secrets via environment variables; never committed to source control' },
+  {
+    label: "TLS 1.2+",
+    detail: "All endpoints enforce minimum TLS 1.2 with strong cipher suites",
+  },
+  {
+    label: "GDPR",
+    detail:
+      "Data export and deletion endpoints available; consent records stored",
+  },
+  {
+    label: "Argon2id",
+    detail: "Passwords hashed with Argon2id, 64 MB memory cost, time cost 3",
+  },
+  {
+    label: "HIBP Check",
+    detail: "New passwords checked against Have I Been Pwned k-anonymity API",
+  },
+  {
+    label: "CSRF Protection",
+    detail: "SameSite cookies and CSRF tokens on all state-mutating endpoints",
+  },
+  {
+    label: "Rate Limiting",
+    detail: "300 requests / 15 min per IP; auth endpoints have stricter limits",
+  },
+  {
+    label: "Input Validation",
+    detail:
+      "All user input sanitized and validated server-side before processing",
+  },
+  {
+    label: "Secret Management",
+    detail:
+      "Secrets via environment variables; never committed to source control",
+  },
 ];
 
 export default function Security() {
@@ -66,7 +106,6 @@ export default function Security() {
   return (
     <div className="pt-32 pb-24 px-6">
       <div className="ns-container">
-
         {/* Hero */}
         <div className="max-w-4xl mb-32">
           <div className="flex items-center gap-3 mb-8">
@@ -75,23 +114,35 @@ export default function Security() {
             </span>
           </div>
           <h1 className="text-[clamp(2.5rem,8vw,5.5rem)] font-bold text-white leading-[0.9] tracking-tighter mb-10">
-            Security is not<br />
-            <span className="text-ns-grey-600">a feature. It's a foundation.</span>
+            Security is not
+            <br />
+            <span className="text-ns-grey-600">
+              a feature. It's a foundation.
+            </span>
           </h1>
           <p className="text-2xl text-ns-grey-400 leading-relaxed font-medium max-w-2xl">
-            Standor is built for engineering teams who take candidate data seriously. Every layer of the stack is designed with defence-in-depth, least privilege, and zero-trust principles.
+            Standor is built for engineering teams who take candidate data
+            seriously. Every layer of the stack is designed with
+            defence-in-depth, least privilege, and zero-trust principles.
           </p>
         </div>
 
         {/* Security Controls Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-48">
           {CONTROLS.map((c) => (
-            <div key={c.title} className="group ns-glass-dark rounded-3xl border border-white/[0.05] p-8 hover:border-white/[0.12] transition-all duration-500">
+            <div
+              key={c.title}
+              className="group ns-glass-dark rounded-3xl border border-white/[0.05] p-8 hover:border-white/[0.12] transition-all duration-500"
+            >
               <div className="w-10 h-10 rounded-xl bg-white/[0.03] flex items-center justify-center text-ns-accent mb-6 group-hover:scale-110 transition-transform">
                 <c.icon size={20} />
               </div>
-              <h3 className="text-base font-bold text-white mb-3 tracking-tight">{c.title}</h3>
-              <p className="text-sm text-ns-grey-500 leading-relaxed">{c.desc}</p>
+              <h3 className="text-base font-bold text-white mb-3 tracking-tight">
+                {c.title}
+              </h3>
+              <p className="text-sm text-ns-grey-500 leading-relaxed">
+                {c.desc}
+              </p>
             </div>
           ))}
         </div>
@@ -100,26 +151,42 @@ export default function Security() {
         <div className="grid lg:grid-cols-2 gap-16 items-start mb-48">
           <div>
             <h2 className="text-4xl font-bold text-white tracking-tighter mb-6 leading-[0.95]">
-              Compliance &<br />hardening checklist
+              Compliance &<br />
+              hardening checklist
             </h2>
             <p className="text-lg text-ns-grey-400 leading-relaxed mb-8">
-              Standor implements security hardening at every layer. Below is a summary of implemented controls as of the current release.
+              Standor implements security hardening at every layer. Below is a
+              summary of implemented controls as of the current release.
             </p>
             <button
-              onClick={() => navigate('/docs')}
+              onClick={() => navigate("/docs")}
               className="inline-flex items-center gap-2 px-6 py-3 border border-white/[0.1] text-white rounded-full text-sm font-medium hover:border-white/[0.25] transition-colors group"
             >
-              Technical documentation <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+              Technical documentation{" "}
+              <ArrowRight
+                size={14}
+                className="group-hover:translate-x-0.5 transition-transform"
+              />
             </button>
           </div>
           <div className="space-y-3">
             {COMPLIANCE.map((item) => (
-              <div key={item.label} className="flex items-start gap-4 p-4 bg-white/[0.02] border border-white/[0.05] rounded-2xl">
-                <CheckCircle2 size={16} className="text-ns-success mt-0.5 shrink-0" />
+              <div
+                key={item.label}
+                className="flex items-start gap-4 p-4 bg-white/[0.02] border border-white/[0.05] rounded-2xl"
+              >
+                <CheckCircle2
+                  size={16}
+                  className="text-ns-success mt-0.5 shrink-0"
+                />
                 <div>
-                  <span className="text-sm font-bold text-white">{item.label}</span>
+                  <span className="text-sm font-bold text-white">
+                    {item.label}
+                  </span>
                   <span className="text-ns-grey-500 text-xs mx-2">—</span>
-                  <span className="text-xs text-ns-grey-500">{item.detail}</span>
+                  <span className="text-xs text-ns-grey-500">
+                    {item.detail}
+                  </span>
                 </div>
               </div>
             ))}
@@ -131,36 +198,64 @@ export default function Security() {
           <div className="absolute inset-0 bg-ns-accent/3 blur-[120px] -z-10" />
           <div className="grid md:grid-cols-2 gap-16">
             <div>
-              <h2 className="text-3xl font-bold text-white mb-6 tracking-tight leading-tight">How your interview data is handled</h2>
+              <h2 className="text-3xl font-bold text-white mb-6 tracking-tight leading-tight">
+                How your interview data is handled
+              </h2>
               <div className="space-y-5 text-sm text-ns-grey-400 leading-relaxed">
                 <p>
-                  <strong className="text-white">Cloud deployment:</strong> Interview sessions, code snapshots, and chat messages are transmitted over TLS and stored encrypted at rest. Only participants in a room can access its content.
+                  <strong className="text-white">Cloud deployment:</strong>{" "}
+                  Interview sessions, code snapshots, and chat messages are
+                  transmitted over TLS and stored encrypted at rest. Only
+                  participants in a room can access its content.
                 </p>
                 <p>
-                  <strong className="text-white">On-premises:</strong> The entire platform can be deployed in your own infrastructure via Docker Compose. Session data never leaves your network — recommended for highly confidential hiring pipelines.
+                  <strong className="text-white">On-premises:</strong> The
+                  entire platform can be deployed in your own infrastructure via
+                  Docker Compose. Session data never leaves your network —
+                  recommended for highly confidential hiring pipelines.
                 </p>
                 <p>
-                  <strong className="text-white">Code storage:</strong> Code snapshot history is stored per-session and accessible only to the room's host and participant. AI analysis results are stored alongside the session and never shared externally.
+                  <strong className="text-white">Code storage:</strong> Code
+                  snapshot history is stored per-session and accessible only to
+                  the room's host and participant. AI analysis results are
+                  stored alongside the session and never shared externally.
                 </p>
                 <p>
-                  <strong className="text-white">Retention:</strong> Sessions can be automatically purged after a configurable number of days. Org admins control retention periods via the settings panel.
+                  <strong className="text-white">Retention:</strong> Sessions
+                  can be automatically purged after a configurable number of
+                  days. Org admins control retention periods via the settings
+                  panel.
                 </p>
               </div>
             </div>
             <div>
-              <h2 className="text-3xl font-bold text-white mb-6 tracking-tight leading-tight">Access and identity</h2>
+              <h2 className="text-3xl font-bold text-white mb-6 tracking-tight leading-tight">
+                Access and identity
+              </h2>
               <div className="space-y-5 text-sm text-ns-grey-400 leading-relaxed">
                 <p>
-                  <strong className="text-white">Authentication:</strong> Email + password (Argon2id), Google OIDC, magic link, and hardware passkeys (WebAuthn). MFA is strongly encouraged and enforced per-org by admins.
+                  <strong className="text-white">Authentication:</strong> Email
+                  + password (Argon2id), Google OIDC, magic link, and hardware
+                  passkeys (WebAuthn). MFA is strongly encouraged and enforced
+                  per-org by admins.
                 </p>
                 <p>
-                  <strong className="text-white">Sessions:</strong> Short-lived JWT access tokens (15 min) combined with rotating refresh tokens (7 days). All active sessions are visible and revocable from the account settings panel.
+                  <strong className="text-white">Sessions:</strong> Short-lived
+                  JWT access tokens (15 min) combined with rotating refresh
+                  tokens (7 days). All active sessions are visible and revocable
+                  from the account settings panel.
                 </p>
                 <p>
-                  <strong className="text-white">Re-authentication:</strong> Sensitive operations — changing password, deleting your account, creating API keys — require a fresh authentication within 15 minutes.
+                  <strong className="text-white">Re-authentication:</strong>{" "}
+                  Sensitive operations — changing password, deleting your
+                  account, creating API keys — require a fresh authentication
+                  within 15 minutes.
                 </p>
                 <p>
-                  <strong className="text-white">Enterprise SSO:</strong> OIDC and SAML connectors available for enterprise customers. Domain-locked provisioning and Just-In-Time (JIT) user creation supported.
+                  <strong className="text-white">Enterprise SSO:</strong> OIDC
+                  and SAML connectors available for enterprise customers.
+                  Domain-locked provisioning and Just-In-Time (JIT) user
+                  creation supported.
                 </p>
               </div>
             </div>
@@ -169,26 +264,28 @@ export default function Security() {
 
         {/* CTA */}
         <div className="text-center">
-          <h2 className="text-4xl font-bold text-white mb-6 tracking-tight">Questions about security?</h2>
+          <h2 className="text-4xl font-bold text-white mb-6 tracking-tight">
+            Questions about security?
+          </h2>
           <p className="text-lg text-ns-grey-400 mb-10 max-w-xl mx-auto">
-            We welcome security researchers and enterprise procurement teams to review our documentation and contact us directly.
+            We welcome security researchers and enterprise procurement teams to
+            review our documentation and contact us directly.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <button
-              onClick={() => navigate('/docs')}
+              onClick={() => navigate("/docs")}
               className="px-8 py-4 bg-white text-black rounded-full font-bold text-sm hover:bg-ns-grey-100 transition-all"
             >
               Read technical docs
             </button>
             <button
-              onClick={() => navigate('/contact')}
+              onClick={() => navigate("/#footer")}
               className="px-8 py-4 bg-white/[0.05] border border-white/[0.1] text-white rounded-full font-bold text-sm hover:bg-white/[0.1] transition-all"
             >
               Contact security team
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );

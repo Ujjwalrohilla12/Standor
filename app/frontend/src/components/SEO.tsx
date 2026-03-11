@@ -4,7 +4,11 @@ const BASE_URL = 'https://standor.dev';
 const DEFAULT_IMAGE = `${BASE_URL}/og-image.png`;
 
 export default function SEO({ title, description, path = '/', image }) {
-  const fullTitle = title ? `${title} | Standor` : 'Standor - Technical Interview Platform';
+  const fullTitle = title
+    ? title.startsWith('Standor | ')
+      ? title
+      : `Standor | ${title}`
+    : 'Standor | Technical Interview Platform';
   const desc = description || 'Conduct AI-powered technical interviews, analyze candidate code in real time, and collaborate seamlessly. Free for everyone.';
   const url = `${BASE_URL}${path}`;
   const img = image || DEFAULT_IMAGE;
