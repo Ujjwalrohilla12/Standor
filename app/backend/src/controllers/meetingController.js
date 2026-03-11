@@ -30,7 +30,7 @@ export async function createMeeting(req, res) {
       hostId: session.hostId,
       status: session.status,
       maxParticipants: session.maxParticipants,
-      meetingLink: `${ENV.CLIENT_URL || ""}/meeting/${session.callId}`,
+      meetingLink: `${ENV.CLIENT_URL || ""}/join/${session.callId}`,
     });
   } catch (error) {
     console.log("Error in createMeeting controller:", error.message);

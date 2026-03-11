@@ -383,12 +383,13 @@ function MeetingInner({
             <h1 className="text-sm font-bold tracking-tight">{code}</h1>
             <button
               onClick={() => {
-                navigator.clipboard.writeText(code);
-                toast.success("Meeting code copied");
+                navigator.clipboard.writeText(`${window.location.origin}/join/${code}`);
+                toast.success("Meeting link copied — share with candidates");
               }}
               className="p-1 px-1.5 rounded bg-white/05 hover:bg-white/10 text-white/40 hover:text-white transition-all ml-1"
+              title="Copy join link"
             >
-              <Copy size={12} />
+              <Share size={12} />
             </button>
           </div>
           <div className="h-4 w-px bg-white/10" />
@@ -1037,11 +1038,16 @@ function ControlButton({
 
 export default function MeetingRoom() {
   const { code } = useParams<{ code: string }>();
+  const navigate = useNavigate();
   const [socket, setSocket] = useState<Socket | null>(null);
   const { token } = useStore();
 
   useEffect(() => {
-    if (!token) return;
+    if (!token) {
+      // Redirect unauthenticated users to the join page
+      navigate(`/join/${code}`, { replace: true });
+      return;
+    }
     const s = io(API_BASE, {
       auth: { token },
       transports: ["websocket", "polling"],
@@ -1050,7 +1056,7 @@ export default function MeetingRoom() {
     return () => {
       s.disconnect();
     };
-  }, [token]);
+  }, [token, code, navigate]);
 
   if (!code) return null;
 

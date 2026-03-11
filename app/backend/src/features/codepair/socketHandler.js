@@ -27,8 +27,6 @@ export const setupCodePairSocket = (io) => {
     // --- CodePair Events ---
 
     socket.on("codepair:join", ({ roomId, user }) => {
-      socket.join(`codepair-${roomId}`);
-
       if (!codepairRooms.has(roomId)) {
         codepairRooms.set(roomId, {
           code: "// Welcome to CodePair\n\n",
@@ -38,6 +36,14 @@ export const setupCodePairSocket = (io) => {
       }
 
       const room = codepairRooms.get(roomId);
+
+      // Enforce max 10 participants
+      if (room.participants.size >= 10 && !room.participants.has(socket.id)) {
+        socket.emit("codepair:room-full", { maxParticipants: 10 });
+        return;
+      }
+
+      socket.join(`codepair-${roomId}`);
 
       // Assign deterministic color based on socket ID
       const color = getParticipantColor(socket.id);

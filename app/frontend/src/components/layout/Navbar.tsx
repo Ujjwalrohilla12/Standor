@@ -87,7 +87,6 @@ export function Navbar() {
     location.pathname.startsWith("/dashboard") ||
     location.pathname.startsWith("/session") ||
     location.pathname.startsWith("/create-session") ||
-    location.pathname.startsWith("/problems") ||
     location.pathname.startsWith("/settings") ||
     location.pathname.startsWith("/team-rooms") ||
     location.pathname.startsWith("/replay") ||
@@ -158,17 +157,6 @@ export function Navbar() {
                 )}
               >
                 Dashboard
-              </Link>
-              <Link
-                to="/problems"
-                className={cn(
-                  "relative text-xs font-bold uppercase tracking-widest transition-colors",
-                  isPathActive("/problems")
-                    ? "text-white"
-                    : "text-neutral-500 hover:text-white",
-                )}
-              >
-                Problems
               </Link>
               <Link
                 to="/team-rooms"

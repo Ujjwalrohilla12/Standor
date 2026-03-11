@@ -182,7 +182,9 @@ function AppContent() {
   // Demo runs as a standalone full-screen route, no global nav/footer
   const isDemoRoute = location.pathname === "/demo";
   const isCodePairRoute = location.pathname.startsWith("/codepair/");
-  const isFullScreenRoute = isDemoRoute || isCodePairRoute;
+  const isMeetingRoute = location.pathname.startsWith("/meeting/");
+  const isJoinRoute = location.pathname.startsWith("/join");
+  const isFullScreenRoute = isDemoRoute || isCodePairRoute || isMeetingRoute || isJoinRoute;
 
   useEffect(() => {
     trackPageview(location.pathname);
@@ -212,6 +214,7 @@ function AppContent() {
                 }
               />
               <Route path="/join" element={<JoinMeeting />} />
+              <Route path="/join/:code" element={<JoinMeeting />} />
               <Route path="/meeting/:code" element={<MeetingRoom />} />
               <Route path="/demo" element={<Demo />} />
               <Route

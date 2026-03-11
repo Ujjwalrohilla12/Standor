@@ -35,17 +35,24 @@ const messageSchema = new mongoose.Schema(
   { _id: false }
 );
 
+// Generate a Google Meet-style code like "abc-defg-hij"
+function generateMeetCode() {
+  const chars = "abcdefghijklmnopqrstuvwxyz";
+  const pick = (n) => Array.from({ length: n }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+  return `${pick(3)}-${pick(4)}-${pick(3)}`;
+}
+
 const sessionSchema = new mongoose.Schema(
   {
     roomId: {
       type: String,
       unique: true,
-      default: () => crypto.randomBytes(4).toString("hex"),
+      default: generateMeetCode,
     },
     callId: {
       type: String,
       unique: true,
-      default: () => crypto.randomBytes(4).toString("hex"),
+      default: generateMeetCode,
     },
     problem: {
       type: String,

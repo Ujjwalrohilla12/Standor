@@ -37,6 +37,7 @@ export default function CodePairPage() {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [currentParticipant, setCurrentParticipant] =
     useState<Participant | null>(null);
+  const [roomFull, setRoomFull] = useState(false);
 
   // Identity state
   const [name, setName] = useState("");
@@ -128,6 +129,11 @@ export default function CodePairPage() {
       setCurrentParticipant(
         me || { id: myId, name: nameRef.current, color: "#3b82f6" },
       );
+    });
+
+    newSocket.on("codepair:room-full", () => {
+      setRoomFull(true);
+      newSocket.disconnect();
     });
 
     newSocket.on(
@@ -260,6 +266,36 @@ export default function CodePairPage() {
 
     socket?.emit("codepair:name-change", { roomId, name: newName });
   };
+
+  // Room full screen
+  if (roomFull) {
+    return (
+      <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="w-full max-w-md mx-4"
+        >
+          <div className="bg-zinc-800/50 border border-zinc-700 rounded-2xl p-8 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-red-600/20 border border-red-500/30 flex items-center justify-center mx-auto mb-4">
+              <Users className="w-8 h-8 text-red-400" />
+            </div>
+            <h1 className="text-2xl font-bold text-white mb-2">Room is Full</h1>
+            <p className="text-zinc-400 text-sm mb-6">
+              This CodePair session has reached the maximum of 10 participants. Please try again later or create a new session.
+            </p>
+            <Button
+              onClick={() => navigate("/dashboard")}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Dashboard
+            </Button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   // If not verified, show the full-screen join page
   if (!sessionVerified) {

@@ -19,6 +19,10 @@ import {
   Activity,
   X,
   RotateCcw,
+  Video,
+  Copy,
+  Link,
+  Check,
 } from "lucide-react";
 import { CardSkeleton, TableSkeleton } from "../components/Skeletons";
 import {
@@ -67,6 +71,8 @@ export default function Dashboard() {
   const [deleting, setDeleting] = useState(false);
   const [exportingId, setExportingId] = useState<string | null>(null);
   const [showCharts, setShowCharts] = useState(false);
+  const [meetingLink, setMeetingLink] = useState<{ code: string; link: string } | null>(null);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   // Pagination & Stats
   const [page, setPage] = useState(1);
@@ -171,7 +177,8 @@ export default function Dashboard() {
     setIsCreating(true);
     try {
       const meeting = await meetingsApi.create();
-      navigate(`/meeting/${meeting.callId}`);
+      const joinLink = `${window.location.origin}/join/${meeting.callId}`;
+      setMeetingLink({ code: meeting.callId, link: joinLink });
     } catch (err) {
       console.error("Failed to create meeting:", err);
     } finally {
@@ -287,11 +294,11 @@ export default function Dashboard() {
             <button
               onClick={handleCreateMeeting}
               disabled={isCreating}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-neutral-800 text-white rounded-lg font-semibold text-sm hover:bg-neutral-700 transition-colors w-full sm:w-auto"
-              title="Start a quick meeting room"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white text-black rounded-lg font-semibold text-sm hover:bg-neutral-200 transition-colors w-full sm:w-auto"
+              title="Start a new interview meeting"
             >
-              <Users size={16} />
-              New Meeting
+              {isCreating ? <Loader2 size={16} className="animate-spin" /> : <Video size={16} />}
+              New Interview
             </button>
           </div>
         </div>
@@ -737,6 +744,91 @@ export default function Dashboard() {
                 )}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Meeting Created Modal */}
+      {meetingLink && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md">
+          <div className="glass-panel border-white/[0.1] rounded-2xl p-6 sm:p-8 max-w-md w-full mx-4 relative">
+            <button
+              onClick={() => { setMeetingLink(null); setLinkCopied(false); }}
+              className="absolute top-4 right-4 text-neutral-500 hover:text-white transition-colors"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center">
+                <Video size={22} className="text-accent" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-white">Interview Meeting Created</h2>
+                <p className="text-xs text-neutral-500">Share the link below with candidates</p>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1.5 ml-1">
+                Meeting Code
+              </label>
+              <div className="flex items-center gap-2 bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3">
+                <span className="text-white font-mono text-sm tracking-wider flex-1">{meetingLink.code}</span>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1.5 ml-1">
+                Share Link
+              </label>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 flex items-center gap-2 bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3">
+                  <Link size={14} className="text-neutral-500 shrink-0" />
+                  <span className="text-white/70 text-xs font-mono truncate">{meetingLink.link}</span>
+                </div>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(meetingLink.link);
+                    setLinkCopied(true);
+                    setTimeout(() => setLinkCopied(false), 2000);
+                  }}
+                  className={`shrink-0 p-3 rounded-xl border transition-all ${linkCopied ? 'bg-green-500/20 border-green-500/30 text-green-400' : 'bg-white/[0.04] border-white/[0.08] text-white/60 hover:text-white hover:bg-white/[0.08]'}`}
+                  title="Copy link"
+                >
+                  {linkCopied ? <Check size={16} /> : <Copy size={16} />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(meetingLink.link);
+                  setLinkCopied(true);
+                  setTimeout(() => setLinkCopied(false), 2000);
+                }}
+                className="flex-1 py-3 bg-white/[0.04] border border-white/[0.08] text-white rounded-xl font-semibold text-sm hover:bg-white/[0.08] transition-all flex items-center justify-center gap-2"
+              >
+                <Copy size={16} />
+                {linkCopied ? 'Copied!' : 'Copy Link'}
+              </button>
+              <button
+                onClick={() => {
+                  setMeetingLink(null);
+                  setLinkCopied(false);
+                  navigate(`/meeting/${meetingLink.code}`);
+                }}
+                className="flex-1 py-3 bg-accent text-white rounded-xl font-semibold text-sm hover:bg-accent-secondary transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(19,127,236,0.3)]"
+              >
+                <Video size={16} />
+                Join Meeting
+              </button>
+            </div>
+
+            <p className="text-[10px] text-neutral-600 text-center mt-4">
+              Candidates in the waiting room will be admitted by you
+            </p>
           </div>
         </div>
       )}
