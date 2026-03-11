@@ -550,6 +550,14 @@ export interface ExecutionResult {
   version: string;
 }
 
+export const meetingsApi = {
+  create: (data?: { title?: string }): Promise<{ _id: string; id: string; callId: string; roomId: string; hostId: string; status: string; maxParticipants: number; meetingLink: string }> =>
+    api.post('/meetings', data || {}).then(r => r.data),
+  get: (code: string) => api.get(`/meetings/${code}`).then(r => r.data),
+  join: (code: string) => api.post(`/meetings/${code}/join`).then(r => r.data),
+  guestJoin: (code: string, name: string) => api.post(`/meetings/${code}/guest-join`, { name }).then(r => r.data),
+};
+
 export const roomsApi = {
   getAll: (params?: { page?: number; limit?: number }): Promise<{ rooms: InterviewRoom[]; total: number; page: number; totalPages: number }> =>
     api.get('/sessions/my-sessions', { params }).then(r => r.data),

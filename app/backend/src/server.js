@@ -1,19 +1,16 @@
 import express from "express";
 import path from "path";
 import cors from "cors";
-import { serve } from "inngest/express";
 
 import { ENV } from "./lib/env.js";
 import { connectDB } from "./lib/db.js";
-import { inngest, functions } from "./lib/inngest.js";
 
 import authRoutes from "./routes/authRoutes.js";
-import chatRoutes from "./routes/chatRoutes.js";
 import sessionRoutes from "./routes/sessionRoute.js";
-import meetingRoutes from "./routes/meetingRoutes.js";
 import webauthnRoutes from "./routes/webauthnRoutes.js";
-import orgRoutes from "./routes/orgRoutes.js";
-import ssoRoutes from "./routes/ssoRoutes.js";
+import problemsRoutes from "./routes/problemsRoutes.js";
+import executionRoutes from "./routes/executionRoutes.js";
+import meetingRoutes from "./routes/meetingRoutes.js";
 
 import { createServer } from "http";
 import { initSocket } from "./lib/socket.js";
@@ -33,14 +30,34 @@ app.get("/health", (req, res) => {
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/inngest", serve({ client: inngest, functions }));
-app.use("/api/chat", chatRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/rooms", sessionRoutes);
-app.use("/api/meetings", meetingRoutes);
 app.use("/api/webauthn", webauthnRoutes);
-app.use("/api/orgs", orgRoutes);
-app.use("/api/sso", ssoRoutes);
+app.use("/api/problems", problemsRoutes);
+app.use("/api/execution", executionRoutes);
+app.use("/api/meetings", meetingRoutes);
+
+// Replay endpoint (returns session snapshots for replay)
+app.get("/api/replay/:roomId", async (req, res) => {
+  try {
+    const { default: Session } = await import("./models/Session.js");
+    const mongoose = await import("mongoose");
+    let session;
+    if (mongoose.default.Types.ObjectId.isValid(req.params.roomId)) {
+      session = await Session.findById(req.params.roomId);
+    } else {
+      session = await Session.findOne({ roomId: req.params.roomId });
+    }
+    if (!session) return res.status(404).json({ message: "Session not found" });
+    res.status(200).json({
+      snapshots: session.codeSnapshots,
+      messages: session.messages,
+      analyses: session.analyses,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
 // make our app ready for deployment
 if (ENV.NODE_ENV === "production") {
@@ -59,13 +76,13 @@ const startServer = async () => {
 
     // Initialize Socket.IO
     const io = initSocket(httpServer);
-    
+
     // Initialize CodePair Socket
     setupCodePairSocket(io);
 
     httpServer.listen(ENV.PORT, () => console.log("Server is running on port:", ENV.PORT));
   } catch (error) {
-    console.error("💥 Error starting the server", error);
+    console.error("Error starting the server", error);
   }
 };
 

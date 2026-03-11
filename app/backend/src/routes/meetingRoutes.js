@@ -1,15 +1,24 @@
 import express from "express";
-import { protectRoute } from "../middleware/protectRoute.js";
 import {
-    getMeetingByCode,
-    joinMeeting,
-    guestJoinMeeting
+  createMeeting,
+  getMeeting,
+  joinMeeting,
+  guestJoinMeeting,
 } from "../controllers/meetingController.js";
+import { protectRoute } from "../middleware/protectRoute.js";
 
 const router = express.Router();
 
-router.get("/:code", getMeetingByCode);
+// Authenticated - create meeting
+router.post("/", protectRoute, createMeeting);
+
+// Public - verify meeting exists
+router.get("/:code", getMeeting);
+
+// Authenticated - join meeting
 router.post("/:code/join", protectRoute, joinMeeting);
+
+// Public - guest join meeting
 router.post("/:code/guest-join", guestJoinMeeting);
 
 export default router;

@@ -25,11 +25,14 @@ import {
   Maximize2,
   Info,
   Loader2,
+  Play,
+  ChevronDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import Editor from "@monaco-editor/react";
 import useStore from "../store/useStore";
 import { MediaProvider, useMedia } from "../components/session/MediaProvider";
+import { codeExecutionApi, ExecutionResult } from "../utils/api";
 
 const API_BASE =
   (import.meta as any).env?.VITE_BACKEND_URL || "http://localhost:4000";
@@ -96,6 +99,12 @@ function MeetingInner({
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const [admitted, setAdmitted] = useState(false);
+
+  // Code execution state
+  const [executing, setExecuting] = useState(false);
+  const [execResult, setExecResult] = useState<ExecutionResult | null>(null);
+  const [showOutput, setShowOutput] = useState(false);
+  const [showLangMenu, setShowLangMenu] = useState(false);
 
   // Initial Join
   useEffect(() => {
@@ -295,6 +304,43 @@ function MeetingInner({
   const canEdit =
     isHost || editorAccess.includes(user?.id || (user as any)?._id);
 
+  const LANGUAGES = [
+    { value: "javascript", label: "JavaScript" },
+    { value: "typescript", label: "TypeScript" },
+    { value: "python", label: "Python" },
+    { value: "java", label: "Java" },
+    { value: "cpp", label: "C++" },
+    { value: "go", label: "Go" },
+    { value: "rust", label: "Rust" },
+  ];
+
+  const handleRunCode = async () => {
+    if (!codeContent.trim()) return;
+    setExecuting(true);
+    setShowOutput(true);
+    try {
+      const result = await codeExecutionApi.execute({
+        language: codeLanguage,
+        code: codeContent,
+      });
+      setExecResult(result);
+    } catch {
+      toast.error("Code execution failed");
+    } finally {
+      setExecuting(false);
+    }
+  };
+
+  const handleLanguageChange = (lang: string) => {
+    setCodeLanguage(lang);
+    setShowLangMenu(false);
+    socket?.emit("coding:update", {
+      code,
+      newCode: codeContent,
+      language: lang,
+    });
+  };
+
   // Video Grid Helper
   const allStreams = Array.from(remoteStreams.entries());
   const gridCount = allStreams.length + (localStream ? 1 : 0);
@@ -431,23 +477,66 @@ function MeetingInner({
                 exit={{ x: 100, opacity: 0 }}
                 className="w-full min-h-[260px] lg:min-h-0 lg:flex-[0.6] bg-[#0A0A0A] rounded-3xl border border-white/[0.08] flex flex-col overflow-hidden shadow-2xl relative group"
               >
+                {/* Editor Header */}
                 <div className="h-12 border-b border-white/[0.05] px-4 flex items-center justify-between bg-white/[0.02]">
                   <div className="flex items-center gap-2">
                     <Terminal size={14} className="text-white/40" />
                     <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">
                       Collaborative Editor
                     </span>
-                    <span className="ml-2 text-[8px] bg-white text-black px-1.5 py-0.5 rounded font-bold uppercase">
-                      {codeLanguage}
-                    </span>
+                    {/* Language Selector */}
+                    <div className="relative ml-2">
+                      <button
+                        onClick={() => setShowLangMenu((v) => !v)}
+                        className="flex items-center gap-1 text-[10px] bg-white/[0.06] hover:bg-white/[0.1] text-white/80 px-2 py-1 rounded-lg font-bold uppercase tracking-wider transition-colors border border-white/[0.08]"
+                      >
+                        {codeLanguage}
+                        <ChevronDown size={10} />
+                      </button>
+                      {showLangMenu && (
+                        <div className="absolute top-full left-0 mt-1 bg-[#111] border border-white/[0.1] rounded-xl shadow-2xl z-50 min-w-[140px] py-1 overflow-hidden">
+                          {LANGUAGES.map((lang) => (
+                            <button
+                              key={lang.value}
+                              onClick={() => handleLanguageChange(lang.value)}
+                              className={`w-full text-left px-3 py-1.5 text-[11px] font-medium hover:bg-white/[0.06] transition-colors ${codeLanguage === lang.value ? "text-white bg-white/[0.04]" : "text-white/60"}`}
+                            >
+                              {lang.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="p-1.5 text-white/40 hover:text-white hover:bg-white/05 rounded-lg transition-colors">
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(codeContent);
+                        toast.success("Code copied");
+                      }}
+                      className="p-1.5 text-white/40 hover:text-white hover:bg-white/[0.05] rounded-lg transition-colors"
+                    >
                       <Copy size={14} />
+                    </button>
+                    <button
+                      onClick={handleRunCode}
+                      disabled={executing}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors border border-green-500/30 disabled:opacity-50"
+                    >
+                      {executing ? (
+                        <Loader2 size={12} className="animate-spin" />
+                      ) : (
+                        <Play size={12} />
+                      )}
+                      {executing ? "Running..." : "Run"}
                     </button>
                   </div>
                 </div>
-                <div className="flex-1 relative">
+
+                {/* Editor */}
+                <div
+                  className={`relative transition-all ${showOutput ? "flex-[0.6]" : "flex-1"}`}
+                >
                   <Editor
                     height="100%"
                     language={codeLanguage}
@@ -470,15 +559,98 @@ function MeetingInner({
                     }}
                   />
                 </div>
-                <div className="h-8 px-4 flex items-center justify-between border-t border-white/[0.05] bg-white/[0.01]">
+
+                {/* Output Panel */}
+                {showOutput && (
+                  <div className="flex-[0.4] border-t border-white/[0.08] flex flex-col bg-[#080808] overflow-hidden">
+                    <div className="h-8 px-3 flex items-center justify-between border-b border-white/[0.05] bg-white/[0.02] shrink-0">
+                      <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">
+                        Output
+                      </span>
+                      <button
+                        onClick={() => setShowOutput(false)}
+                        className="text-white/30 hover:text-white transition-colors"
+                      >
+                        <Minimize2 size={12} />
+                      </button>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-3 custom-scrollbar">
+                      {executing ? (
+                        <div className="flex items-center gap-2 text-white/40 text-xs">
+                          <Loader2 size={12} className="animate-spin" />
+                          Executing...
+                        </div>
+                      ) : execResult ? (
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-3 text-[9px] font-mono text-white/40 uppercase tracking-widest">
+                            <span>
+                              Exit:{" "}
+                              <span
+                                className={
+                                  execResult.run?.code === 0
+                                    ? "text-green-400"
+                                    : "text-red-400"
+                                }
+                              >
+                                {execResult.run?.code ?? "—"}
+                              </span>
+                            </span>
+                            <span>
+                              {execResult.language} {execResult.version}
+                            </span>
+                          </div>
+                          {execResult.run?.stdout && (
+                            <pre className="bg-black/40 border border-white/[0.05] rounded-xl p-3 text-[11px] font-mono text-green-300 whitespace-pre-wrap overflow-x-auto max-h-40">
+                              {execResult.run.stdout}
+                            </pre>
+                          )}
+                          {execResult.run?.stderr && (
+                            <pre className="bg-red-950/20 border border-red-500/10 rounded-xl p-3 text-[11px] font-mono text-red-300 whitespace-pre-wrap overflow-x-auto max-h-32">
+                              {execResult.run.stderr}
+                            </pre>
+                          )}
+                          {execResult.compile?.stderr && (
+                            <pre className="bg-yellow-950/20 border border-yellow-500/10 rounded-xl p-3 text-[11px] font-mono text-yellow-300 whitespace-pre-wrap overflow-x-auto max-h-32">
+                              {execResult.compile.stderr}
+                            </pre>
+                          )}
+                          {!execResult.run?.stdout &&
+                            !execResult.run?.stderr &&
+                            !execResult.compile?.stderr && (
+                              <p className="text-[11px] text-white/30 font-mono italic">
+                                No output
+                              </p>
+                            )}
+                        </div>
+                      ) : (
+                        <p className="text-[11px] text-white/20 font-mono italic">
+                          Run your code to see output here
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Status bar */}
+                <div className="h-8 px-4 flex items-center justify-between border-t border-white/[0.05] bg-white/[0.01] shrink-0">
                   <span className="text-[9px] text-white/20 font-mono italic">
                     Changes are synced in real-time
                   </span>
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-[9px] text-white/30 font-bold uppercase">
-                      Live
-                    </span>
+                  <div className="flex items-center gap-3">
+                    {!showOutput && (
+                      <button
+                        onClick={() => setShowOutput(true)}
+                        className="text-[9px] text-white/30 hover:text-white/60 font-mono uppercase tracking-wider transition-colors"
+                      >
+                        Show Output
+                      </button>
+                    )}
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                      <span className="text-[9px] text-white/30 font-bold uppercase">
+                        Live
+                      </span>
+                    </div>
                   </div>
                 </div>
               </motion.div>

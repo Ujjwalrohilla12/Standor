@@ -1,39 +1,107 @@
 import mongoose from "mongoose";
+import crypto from "crypto";
+
+const aiAnalysisSchema = new mongoose.Schema(
+  {
+    timeComplexity: { type: String, default: "" },
+    spaceComplexity: { type: String, default: "" },
+    correctness: { type: String, default: "" },
+    bugs: [String],
+    suggestions: [String],
+    testCases: [String],
+    codeStyle: { type: String, default: "" },
+    overallScore: { type: Number, default: 0 },
+    summary: { type: String, default: "" },
+    analyzedAt: { type: Date, default: Date.now },
+  },
+  { _id: false }
+);
+
+const codeSnapshotSchema = new mongoose.Schema(
+  {
+    content: { type: String, required: true },
+    language: { type: String, default: "javascript" },
+    timestamp: { type: Date, default: Date.now },
+  },
+  { _id: false }
+);
+
+const messageSchema = new mongoose.Schema(
+  {
+    sender: { type: String, required: true },
+    text: { type: String, required: true },
+    timestamp: { type: Date, default: Date.now },
+  },
+  { _id: false }
+);
 
 const sessionSchema = new mongoose.Schema(
   {
+    roomId: {
+      type: String,
+      unique: true,
+      default: () => crypto.randomBytes(4).toString("hex"),
+    },
+    callId: {
+      type: String,
+      unique: true,
+      default: () => crypto.randomBytes(4).toString("hex"),
+    },
     problem: {
       type: String,
-      required: true,
+      default: "Meeting",
     },
     difficulty: {
       type: String,
-      enum: ["easy", "medium", "hard"],
-      required: true,
+      enum: ["EASY", "MEDIUM", "HARD"],
+      default: "MEDIUM",
     },
-    host: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+    maxParticipants: {
+      type: Number,
+      default: 50,
     },
-    participant: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
-    },
-    status: {
+    type: {
       type: String,
-      enum: ["active", "completed"],
-      default: "active",
+      enum: ["INTERVIEW", "MEETING"],
+      default: "INTERVIEW",
     },
     language: {
       type: String,
       default: "javascript",
     },
-    // stream video call ID
-    callId: {
+    status: {
+      type: String,
+      enum: ["ACTIVE", "COMPLETED"],
+      default: "ACTIVE",
+    },
+    hostId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    participantId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    code: {
       type: String,
       default: "",
+    },
+    messages: [messageSchema],
+    analyses: [aiAnalysisSchema],
+    codeSnapshots: [codeSnapshotSchema],
+    startedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    endedAt: {
+      type: Date,
+      default: null,
+    },
+    lastActivityAt: {
+      type: Date,
+      default: Date.now,
     },
   },
   { timestamps: true }

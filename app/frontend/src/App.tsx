@@ -181,6 +181,8 @@ function AppContent() {
 
   // Demo runs as a standalone full-screen route, no global nav/footer
   const isDemoRoute = location.pathname === "/demo";
+  const isCodePairRoute = location.pathname.startsWith("/codepair/");
+  const isFullScreenRoute = isDemoRoute || isCodePairRoute;
 
   useEffect(() => {
     trackPageview(location.pathname);
@@ -194,9 +196,9 @@ function AppContent() {
     <div className="App relative min-h-screen flex flex-col">
       <GlowCursor />
       <div
-        className={`relative flex-1 flex flex-col ${!isAuthPage && !isDemoRoute ? "pt-10 md:pt-12" : ""}`}
+        className={`relative flex-1 flex flex-col ${!isAuthPage && !isFullScreenRoute ? "pt-10 md:pt-12" : ""}`}
       >
-        {!isAuthPage && !isDemoRoute && <Navbar />}
+        {!isAuthPage && !isFullScreenRoute && <Navbar />}
         <PageTransition>
           <Suspense fallback={<PageLoader />}>
             <Routes>
@@ -406,14 +408,7 @@ function AppContent() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/codepair/:roomId"
-                element={
-                  <ProtectedRoute>
-                    <CodePairPage />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/codepair/:roomId" element={<CodePairPage />} />
               <Route
                 path="/create-session"
                 element={
@@ -515,7 +510,7 @@ function AppContent() {
             </Routes>
           </Suspense>
         </PageTransition>
-        {!isAuthPage && !isDemoRoute && <Footer />}
+        {!isAuthPage && !isFullScreenRoute && <Footer />}
       </div>
     </div>
   );

@@ -7,7 +7,6 @@ import { ENV } from "../lib/env.js";
 import User from "../models/User.js";
 import AuthSession from "../models/AuthSession.js";
 import { verifyGoogleToken, getGoogleAuthUrl, verifyGoogleCode } from "../lib/googleAuth.js";
-import { upsertStreamUser } from "../lib/stream.js";
 import { logAuditEvent } from "../lib/auditLogger.js";
 
 export const googleAuthRedirect = async (req, res) => {
@@ -39,12 +38,6 @@ export const googleAuthCallback = async (req, res) => {
                 email,
                 name,
                 profileImage: profileImage || "",
-            });
-
-            await upsertStreamUser({
-                id: user._id.toString(),
-                name: user.name,
-                image: user.profileImage,
             });
         } else if (!user.googleId) {
             user.googleId = googleId;
@@ -100,12 +93,6 @@ export const googleAuth = async (req, res) => {
                 email,
                 name,
                 profileImage,
-            });
-
-            await upsertStreamUser({
-                id: user._id.toString(),
-                name: user.name,
-                image: user.profileImage,
             });
         } else if (!user.googleId) {
             user.googleId = googleId;

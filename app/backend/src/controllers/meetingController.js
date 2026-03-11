@@ -1,75 +1,141 @@
-import Session from "../models/Session.js";
 import jwt from "jsonwebtoken";
+import Session from "../models/Session.js";
+import User from "../models/User.js";
 import { ENV } from "../lib/env.js";
+import crypto from "crypto";
 
-export const getMeetingByCode = async (req, res) => {
-    try {
-        const { code } = req.params;
-        // Search by callId or code. In this implementation, we use callId as the meeting code.
-        const session = await Session.findOne({ callId: code, status: "active" });
+const MAX_PARTICIPANTS = 50;
 
-        if (!session) {
-            return res.status(404).json({ error: "Meeting not found" });
-        }
+// POST /api/meetings - Create a new meeting
+export async function createMeeting(req, res) {
+  try {
+    const userId = req.user._id;
+    const { title } = req.body;
 
-        res.status(200).json(session);
-    } catch (error) {
-        console.error("Error in getMeetingByCode:", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
+    const session = await Session.create({
+      problem: title || "Meeting",
+      difficulty: "MEDIUM",
+      language: "javascript",
+      hostId: userId,
+      type: "MEETING",
+      maxParticipants: MAX_PARTICIPANTS,
+      startedAt: new Date(),
+    });
+
+    res.status(201).json({
+      _id: session._id,
+      id: session._id,
+      callId: session.callId,
+      roomId: session.roomId,
+      hostId: session.hostId,
+      status: session.status,
+      maxParticipants: session.maxParticipants,
+      meetingLink: `${ENV.CLIENT_URL || ""}/meeting/${session.callId}`,
+    });
+  } catch (error) {
+    console.log("Error in createMeeting controller:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+// GET /api/meetings/:code - Verify meeting exists
+export async function getMeeting(req, res) {
+  try {
+    const { code } = req.params;
+    const session = await Session.findOne({
+      $or: [{ callId: code }, { roomId: code }],
+      status: "ACTIVE",
+    });
+
+    if (!session) {
+      return res.status(404).json({ error: "Meeting not found" });
     }
-};
 
-export const joinMeeting = async (req, res) => {
-    try {
-        const { code } = req.params;
-        const userId = req.user._id;
+    res.status(200).json({
+      id: session._id,
+      callId: session.callId,
+      roomId: session.roomId,
+      hostId: session.hostId,
+      status: session.status,
+    });
+  } catch (error) {
+    console.log("Error in getMeeting controller:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 
-        const session = await Session.findOne({ callId: code });
+// POST /api/meetings/:code/join - Authenticated user join
+export async function joinMeeting(req, res) {
+  try {
+    const { code } = req.params;
+    const userId = req.user._id;
 
-        if (!session) {
-            return res.status(404).json({ error: "Meeting not found" });
-        }
+    const session = await Session.findOne({
+      $or: [{ callId: code }, { roomId: code }],
+      status: "ACTIVE",
+    });
 
-        // If user is host, they join immediately
-        if (session.host.toString() === userId.toString()) {
-            return res.status(200).json({ status: "JOINED", session });
-        }
-
-        // Otherwise, they go to the waiting room
-        res.status(200).json({ status: "WAITING_ROOM", session });
-    } catch (error) {
-        console.error("Error in joinMeeting:", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
+    if (!session) {
+      return res.status(404).json({ error: "Meeting not found" });
     }
-};
 
-export const guestJoinMeeting = async (req, res) => {
-    try {
-        const { code } = req.params;
-        const { name } = req.body;
-
-        if (!name) {
-            return res.status(400).json({ error: "Name is required" });
-        }
-
-        const session = await Session.findOne({ callId: code });
-
-        if (!session) {
-            return res.status(404).json({ error: "Meeting not found" });
-        }
-
-        // Create a temporary guest user/token
-        const guestId = `guest_${Math.random().toString(36).substring(7)}`;
-        const token = jwt.sign({ id: guestId, name, role: "guest" }, ENV.JWT_SECRET, { expiresIn: "2h" });
-
-        res.status(200).json({
-            status: "WAITING_ROOM",
-            user: { id: guestId, name, role: "guest" },
-            token,
-            session
-        });
-    } catch (error) {
-        console.error("Error in guestJoinMeeting:", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
+    // Host is auto-admitted
+    if (session.hostId.toString() === userId.toString()) {
+      return res.status(200).json({ status: "ADMITTED", joined: true });
     }
-};
+
+    // Non-host goes to waiting room
+    res.status(200).json({ status: "WAITING_ROOM", joined: true });
+  } catch (error) {
+    console.log("Error in joinMeeting controller:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+// POST /api/meetings/:code/guest-join - Guest join (creates temp user + token)
+export async function guestJoinMeeting(req, res) {
+  try {
+    const { code } = req.params;
+    const { name } = req.body;
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: "Name is required" });
+    }
+
+    const session = await Session.findOne({
+      $or: [{ callId: code }, { roomId: code }],
+      status: "ACTIVE",
+    });
+
+    if (!session) {
+      return res.status(404).json({ error: "Meeting not found" });
+    }
+
+    // Create a guest user with a unique email
+    const guestId = crypto.randomBytes(8).toString("hex");
+    const guestUser = await User.create({
+      name: name.trim(),
+      email: `guest_${guestId}@standor.guest`,
+      password: crypto.randomBytes(16).toString("hex"),
+      emailVerified: true,
+    });
+
+    const token = jwt.sign({ userId: guestUser._id }, ENV.JWT_SECRET, {
+      expiresIn: "24h",
+    });
+
+    res.status(200).json({
+      user: {
+        id: guestUser._id,
+        _id: guestUser._id,
+        name: guestUser.name,
+        email: guestUser.email,
+      },
+      token,
+      status: "WAITING_ROOM",
+    });
+  } catch (error) {
+    console.log("Error in guestJoinMeeting controller:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
