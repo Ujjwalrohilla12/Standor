@@ -298,8 +298,24 @@ const useStore = create<StoreState>((set, get) => ({
     }
   },
 
-  theme: 'dark',
-  toggleTheme: () => set((s) => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })),
+  theme: (() => {
+    try {
+      return (localStorage.getItem('standor_theme') as 'dark' | 'light') || 'dark';
+    } catch {
+      return 'dark';
+    }
+  })(),
+  toggleTheme: () => {
+    set((s) => {
+      const newTheme = s.theme === 'dark' ? 'light' : 'dark';
+      try {
+        localStorage.setItem('standor_theme', newTheme);
+      } catch {
+        // Ignore localStorage errors
+      }
+      return { theme: newTheme };
+    });
+  },
 
   sessions: [],
   currentSession: null,

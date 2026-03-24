@@ -17,6 +17,7 @@ import { trackPageview, onConsentChanged } from "./utils/analytics";
 import { Toaster } from "sonner";
 import { HelmetProvider } from "react-helmet-async";
 import { ArrowLeft, Home } from "lucide-react";
+import useStore from "./store/useStore";
 
 // ───── Eagerly loaded (critical path — tiny components) ─────
 import { Navbar } from "./components/layout/Navbar";
@@ -173,6 +174,7 @@ function MarketingRoute({
 
 function AppContent() {
   const location = useLocation();
+  const { theme } = useStore();
   const isAuthPage = authRoutes.includes(location.pathname);
   const isMarketingPage =
     marketingRoutes.includes(location.pathname) ||
@@ -195,6 +197,16 @@ function AppContent() {
     () => onConsentChanged(() => trackPageview(location.pathname)),
     [location.pathname],
   );
+
+  // Apply theme class to document element
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'light') {
+      root.classList.add('light');
+    } else {
+      root.classList.remove('light');
+    }
+  }, [theme]);
 
   return (
     <div className="App relative min-h-screen flex flex-col">

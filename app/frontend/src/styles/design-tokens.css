@@ -148,6 +148,34 @@
 }
 
 /* ========================================
+   LIGHT THEME OVERRIDES
+   ======================================== */
+
+.light {
+  /* Background Colors - Light Theme */
+  --bg-900: #FFFFFF;
+  --surface: #F8F9FA;
+  
+  /* Text Colors - Light Theme */
+  --text: #1A1A1A;
+  --muted: #6B7280;
+  
+  /* Card Colors - Light Theme */
+  --card-bg: rgba(0, 0, 0, 0.02);
+  --card-border: rgba(0, 0, 0, 0.06);
+  --card-hover-bg: rgba(0, 0, 0, 0.04);
+  --card-hover-border: rgba(0, 0, 0, 0.12);
+  
+  /* Focus Ring - Light Theme */
+  --focus-ring: rgba(0, 0, 0, 0.14);
+  
+  /* Shadow Tokens - Light Theme */
+  --shadow-subtle: 0 6px 18px rgba(0, 0, 0, 0.1);
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* ========================================
    REDUCED MOTION SUPPORT
    ======================================== */
 

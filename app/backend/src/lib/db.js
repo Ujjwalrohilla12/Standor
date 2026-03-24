@@ -19,3 +19,4 @@ export const connectDB = async () => {
     // Don't exit, continue without DB
   }
 };
+

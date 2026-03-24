@@ -29,9 +29,8 @@ export const googleAuthCallback = async (req, res) => {
         }
 
         const { sub: googleId, email, name, picture: profileImage } = payload;
-
+            //todo : Fix the timeout issue with google auth, currently it is throwing buffering the timeout error, need to fix it
         let user = await User.findOne({ $or: [{ googleId }, { email }] });
-
         if (!user) {
             user = await User.create({
                 googleId,

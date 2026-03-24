@@ -62,15 +62,15 @@ iframe {
   /* Glass panel utility — used by Navbar and other overlays */
   .ns-glass {
     background: rgba(11, 11, 13, 0.8);
-    backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   .ns-glass-dark {
     background: rgba(11, 18, 32, 0.85);
-    backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
     border: 1px solid rgba(255, 255, 255, 0.05);
   }
 

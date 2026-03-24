@@ -692,6 +692,7 @@ export default function Settings() {
                 value={profileName}
                 onChange={(e) => setProfileName(e.target.value)}
                 className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3.5 py-2.5 text-sm text-white focus:border-ns-accent outline-none transition-colors"
+                placeholder="Enter your display name"
                 data-testid="settings-name-input"
               />
             </div>
@@ -704,6 +705,7 @@ export default function Settings() {
                 value={profileEmail}
                 onChange={(e) => setProfileEmail(e.target.value)}
                 className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3.5 py-2.5 text-sm text-white focus:border-ns-accent outline-none transition-colors"
+                placeholder="Enter your email address"
                 data-testid="settings-email-input"
               />
             </div>
@@ -853,6 +855,7 @@ export default function Settings() {
                   type="button"
                   onClick={() => setCpShowCurrent((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-600 hover:text-neutral-400 transition-colors"
+                  aria-label={cpShowCurrent ? "Hide current password" : "Show current password"}
                 >
                   {cpShowCurrent ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
@@ -869,6 +872,7 @@ export default function Settings() {
                   type="button"
                   onClick={() => setCpShowNew((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-600 hover:text-neutral-400 transition-colors"
+                  aria-label={cpShowNew ? "Hide new password" : "Show new password"}
                 >
                   {cpShowNew ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
@@ -905,18 +909,19 @@ export default function Settings() {
           <div className="space-y-3">
             <div className="flex items-center justify-between gap-4">
               <div className="min-w-0">
-                <p className="text-sm text-neutral-300 truncate">Dark Mode</p>
+                <p className="text-sm text-neutral-300 truncate">Theme</p>
                 <p className="text-xs text-neutral-600 truncate">
-                  Always dark for now
+                  Toggle between light and dark mode
                 </p>
               </div>
               <button
                 onClick={toggleTheme}
-                className={`relative w-10 h-5 rounded-full transition-colors shrink-0 ${theme === "dark" ? "bg-white" : "bg-neutral-700"}`}
+                className={`relative w-10 h-5 rounded-full transition-colors shrink-0 ${theme === "dark" ? "bg-white" : "bg-neutral-600"}`}
                 data-testid="theme-toggle"
+                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
               >
                 <div
-                  className={`absolute top-0.5 w-4 h-4 rounded-full transition-all ${theme === "dark" ? "bg-black left-5" : "bg-neutral-400 left-0.5"}`}
+                  className={`absolute top-0.5 w-4 h-4 rounded-full transition-all ${theme === "dark" ? "bg-black left-5" : "bg-white left-0.5"}`}
                 />
               </button>
             </div>
@@ -935,6 +940,7 @@ export default function Settings() {
                 }
                 className={`relative w-10 h-5 rounded-full transition-colors shrink-0 ${form.reducedMotion ? "bg-white" : "bg-neutral-700"}`}
                 data-testid="reduced-motion-toggle"
+                aria-label={`Turn ${form.reducedMotion ? 'off' : 'on'} reduced motion`}
               >
                 <div
                   className={`absolute top-0.5 w-4 h-4 rounded-full transition-all ${form.reducedMotion ? "bg-black left-5" : "bg-neutral-400 left-0.5"}`}
@@ -956,6 +962,7 @@ export default function Settings() {
                 }
                 className={`relative w-10 h-5 rounded-full transition-colors shrink-0 ${form.highContrast ? "bg-white" : "bg-neutral-700"}`}
                 data-testid="high-contrast-toggle"
+                aria-label={`Turn ${form.highContrast ? 'off' : 'on'} high contrast`}
               >
                 <div
                   className={`absolute top-0.5 w-4 h-4 rounded-full transition-all ${form.highContrast ? "bg-black left-5" : "bg-neutral-400 left-0.5"}`}
@@ -990,6 +997,7 @@ export default function Settings() {
                 }
                 className={`relative w-10 h-5 rounded-full transition-colors shrink-0 ${form.obfuscateData ? "bg-white" : "bg-neutral-700"}`}
                 data-testid="obfuscate-toggle"
+                aria-label={`Turn ${form.obfuscateData ? 'off' : 'on'} data obfuscation`}
               >
                 <div
                   className={`absolute top-0.5 w-4 h-4 rounded-full transition-all ${form.obfuscateData ? "bg-black left-5" : "bg-neutral-400 left-0.5"}`}
@@ -1186,6 +1194,7 @@ export default function Settings() {
                   handleGovernanceToggle("analyticsConsent", !analyticsConsent)
                 }
                 className={`relative w-10 h-5 rounded-full transition-colors shrink-0 ${analyticsConsent ? "bg-white" : "bg-neutral-700"}`}
+                aria-label={`Turn ${analyticsConsent ? 'off' : 'on'} analytics consent`}
               >
                 <div
                   className={`absolute top-0.5 w-4 h-4 rounded-full transition-all ${analyticsConsent ? "bg-black left-5" : "bg-neutral-400 left-0.5"}`}
@@ -1303,6 +1312,7 @@ export default function Settings() {
                   <button
                     onClick={() => setGeneratedKey(null)}
                     className="text-ns-accent hover:text-white transition-colors"
+                    aria-label="Close new key notification"
                   >
                     <Trash2 size={12} />
                   </button>
@@ -1320,6 +1330,7 @@ export default function Settings() {
                       toast.success("Copied to clipboard");
                     }}
                     className="p-1.5 hover:bg-white/10 rounded-md transition-colors text-neutral-400 hover:text-white shrink-0"
+                    aria-label="Copy API key to clipboard"
                   >
                     <Copy size={13} className="sm:w-[14px] sm:h-[14px]" />
                   </button>
@@ -1655,6 +1666,7 @@ export default function Settings() {
                           setOrgInviteRole(e.target.value as "admin" | "member")
                         }
                         className="flex-1 sm:flex-none bg-white/[0.04] border border-white/[0.1] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-white/20 transition-all"
+                        aria-label="Select role for invitation"
                       >
                         <option value="member">Member</option>
                         <option value="admin">Admin</option>
@@ -1665,6 +1677,7 @@ export default function Settings() {
                           orgInviteLoading || !orgInviteEmail.includes("@")
                         }
                         className="px-4 py-2 bg-white text-black rounded-lg text-xs font-bold hover:bg-neutral-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5 shrink-0"
+                        aria-label="Invite member"
                       >
                         {orgInviteLoading ? (
                           <Loader2 size={12} className="animate-spin" />
@@ -1703,6 +1716,7 @@ export default function Settings() {
                         onClick={handleSaveRetention}
                         disabled={savingRetention}
                         className="px-4 py-2 bg-white text-black rounded-lg text-xs font-bold hover:bg-neutral-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5 shrink-0"
+                        aria-label="Save retention settings"
                       >
                         {savingRetention ? (
                           <Loader2 size={12} className="animate-spin" />

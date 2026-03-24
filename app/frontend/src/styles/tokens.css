@@ -107,11 +107,79 @@
   --ns-duration-slow: 600ms;
 }
 
+/* Light Theme Variables */
+.light {
+  /* Core Palette - Light Theme */
+  --ns-black: #000000;
+  --ns-bg-900: #FFFFFF;
+  --ns-bg-800: #F8F9FA;
+  --ns-bg-700: #E9ECEF;
+  --ns-bg-600: #DEE2E6;
+
+  --ns-surface-500: #ADB5BD;
+  --ns-surface-400: #6C757D;
+  --ns-surface-300: #495057;
+
+  --ns-grey-500: #6C757D;
+  --ns-grey-400: #495057;
+  --ns-grey-300: #343A40;
+  --ns-grey-200: #212529;
+  --ns-grey-100: #000000;
+
+  --ns-white: #FFFFFF;
+  --ns-off-white: #F8F9FA;
+
+  /* Accent — Keep the same accent colors */
+  --ns-accent: #D8D8E8;
+  --ns-accent-hover: #EEEEF6;
+  --ns-accent-dim: rgba(216, 216, 232, 0.12);
+  --ns-glow: rgba(216, 216, 232, 0.20);
+  --ns-teal: #C0C0CC;
+  --ns-teal-hover: #D8D8E4;
+  --ns-teal-dim: rgba(192, 192, 204, 0.12);
+
+  /* Status - Keep the same */
+  --ns-success: #32D74B;
+  --ns-warning: #FF9F0A;
+  --ns-danger: #FF453A;
+
+  /* Semantic Tokens - Light Theme */
+  --ns-bg: var(--ns-bg-900);
+  --ns-border: rgba(0, 0, 0, 0.08);
+  --ns-border-hover: rgba(0, 0, 0, 0.16);
+
+  --ns-text-primary: var(--ns-black);
+  --ns-text-secondary: var(--ns-grey-300);
+  --ns-text-muted: var(--ns-grey-500);
+  --ns-text-disabled: var(--ns-grey-700);
+
+  /* Glass — lighter for light theme */
+  --ns-glass: rgba(255, 255, 255, 0.8);
+  --ns-glass-border: rgba(0, 0, 0, 0.08);
+  --ns-glass-blur: 8px;
+
+  /* Surface Hierarchy - Light Theme */
+  --ns-surface-l0: #FFFFFF;
+  --ns-surface-l1: #F8F9FA;
+  --ns-surface-l1-border: rgba(0, 0, 0, 0.06);
+  --ns-surface-l2: rgba(255, 255, 255, 0.8);
+  --ns-surface-l2-border: rgba(0, 0, 0, 0.08);
+  --ns-surface-l2-blur: 8px;
+  --ns-glow-accent: rgba(216, 216, 232, 0.15);
+
+  /* Shadows — lighter for light theme */
+  --ns-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --ns-shadow-md: 0 10px 40px rgba(0, 0, 0, 0.15);
+  --ns-shadow-lg: 0 18px 60px rgba(0, 0, 0, 0.2);
+  --ns-shadow-card: 0 10px 40px rgba(0, 0, 0, 0.15);
+  --ns-shadow-card-hover: 0 18px 60px rgba(0, 0, 0, 0.2);
+}
+
 /* Utility classes */
 .ns-glass {
   background: var(--ns-glass);
-  backdrop-filter: blur(var(--ns-glass-blur));
   -webkit-backdrop-filter: blur(var(--ns-glass-blur));
+  backdrop-filter: blur(var(--ns-glass-blur));
   border: 1px solid var(--ns-glass-border);
 }
 
@@ -137,8 +205,8 @@
 /* L2 — elevated cards, CTAs, floating modules */
 .ns-card {
   background: var(--ns-surface-l2);
-  backdrop-filter: blur(var(--ns-surface-l2-blur));
   -webkit-backdrop-filter: blur(var(--ns-surface-l2-blur));
+  backdrop-filter: blur(var(--ns-surface-l2-blur));
   border: 1px solid var(--ns-surface-l2-border);
 }
 
