@@ -24,6 +24,7 @@ api.interceptors.response.use(
     (res) => res,
     async (error) => {
         const originalRequest = error.config;
+        const currentPath = typeof window.location.pathname === 'string' ? window.location.pathname : '';
 
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
@@ -32,7 +33,7 @@ api.interceptors.response.use(
             store.logout();
 
             // Only redirect if not already on login page
-            if (!window.location.pathname.startsWith('/login')) {
+            if (!currentPath.startsWith('/login')) {
                 import('sonner').then(({ toast }) => {
                     toast.error('Session Expired', {
                         description: 'Your session has expired. Please log in again.',

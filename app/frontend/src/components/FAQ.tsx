@@ -35,7 +35,7 @@ export default function FAQ() {
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
 
   return (
-    <section className="w-full py-24 px-6 lg:px-12 bg-black border-t border-white/5">
+    <section className="w-full py-24 px-6 lg:px-12 bg-[linear-gradient(180deg,#090b0e_0%,#080a0d_100%)] border-t border-white/5">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-3xl sm:text-4xl font-bold text-center mb-16 text-white uppercase tracking-widest">
           Frequently Asked Questions
@@ -46,18 +46,18 @@ export default function FAQ() {
             return (
               <div
                 key={i}
-                className={`rounded-xl border transition-colors ${
+                className={`rounded-[1.25rem] border transition-colors duration-300 ${
                   isOpen
-                    ? "border-white/20 bg-white/5"
-                    : "border-white/10 bg-white/[0.02] hover:border-white/15"
+                    ? "border-white/20 bg-white/5 shadow-[0_18px_40px_rgba(196,199,206,0.06)]"
+                    : "border-white/10 bg-white/[0.02] hover:border-white/15 hover:shadow-[0_16px_34px_rgba(196,199,206,0.04)]"
                 }`}
               >
                 <button
                   onClick={() => toggle(i)}
-                  className="w-full text-left px-6 py-4 flex items-center justify-between gap-4"
+                  className="w-full text-left px-6 py-5 flex items-center justify-between gap-4"
                 >
                   <h4
-                    className={`font-semibold text-sm transition-colors ${isOpen ? "text-white" : "text-neutral-300"}`}
+                    className={`font-bold text-sm transition-colors ${isOpen ? "text-white" : "text-[#3b3f44]"}`}
                   >
                     {item.q}
                   </h4>
@@ -80,7 +80,7 @@ export default function FAQ() {
                       transition={{ duration: 0.2 }}
                       className="overflow-hidden"
                     >
-                      <p className="px-6 pb-5 text-sm text-neutral-400 leading-relaxed">
+                      <p className="px-6 pb-5 text-sm text-[#2f3237] font-semibold leading-relaxed">
                         {item.a}
                       </p>
                     </motion.div>

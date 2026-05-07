@@ -136,8 +136,30 @@ export const sessionsApi = {
     api.get(`/sessions/share/${token}`).then(r => r.data),
   getActivity: (id: string): Promise<ActivityEvent[]> =>
     api.get(`/sessions/${id}/activity`).then(r => r.data),
-  getReport: (id: string): Promise<InvestigationReport> =>
+  getReport: (id: string): Promise<{ report: SessionFeedbackReport }> =>
     api.get(`/sessions/${id}/report`).then(r => r.data),
+  getReportHistory: (id: string): Promise<{ sessionId: string; totalReports: number; history: any[] }> =>
+    api.get(`/sessions/${id}/report-history`).then(r => r.data),
+  getFullReport: (id: string, index?: number): Promise<any> =>
+    api.get(`/sessions/${id}/report-full`, { params: { index } }).then(r => r.data),
+  getAnalyses: (id: string): Promise<any> =>
+    api.get(`/sessions/${id}/analyses`).then(r => r.data),
+  getSnapshots: (id: string): Promise<any> =>
+    api.get(`/sessions/${id}/snapshots`).then(r => r.data),
+  analyzeProgression: (id: string): Promise<any> =>
+    api.post(`/sessions/${id}/analyze-progression`).then(r => r.data),
+  uploadAudioChunk: (id: string, audioBlob: Blob, speaker: 'interviewer' | 'candidate'): Promise<any> => {
+    const formData = new FormData();
+    formData.append('audio', audioBlob, `chunk-${Date.now()}.webm`);
+    formData.append('speaker', speaker);
+    return api.post(`/sessions/${id}/audio-chunk`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }).then(r => r.data);
+  },
+  finalizeMeeting: (id: string): Promise<any> =>
+    api.post(`/sessions/${id}/finalize-meeting`).then(r => r.data),
+  getMeetingReport: (id: string): Promise<any> =>
+    api.get(`/sessions/${id}/meeting-report`).then(r => r.data),
 };
 
 export interface StreamFlow {
@@ -185,6 +207,18 @@ export interface InvestigationReport {
   topFlows: StreamFlow[];
   anomalyFindings: AnomalyFinding[];
   annotations: Array<{ id: string; packetId: string; userName: string; comment: string; tags: string[]; created: string }>;
+}
+
+export interface SessionFeedbackReport {
+  audience: 'interviewer' | 'candidate' | 'system' | string;
+  summary: string;
+  strengths: string[];
+  improvementAreas: string[];
+  recommendations: string[];
+  score: number;
+  generatedAt: string;
+  snapshotCount: number;
+  analysis?: AIAnalysis;
 }
 
 export interface AnomalyFinding {

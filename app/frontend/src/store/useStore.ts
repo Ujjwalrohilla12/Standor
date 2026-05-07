@@ -196,7 +196,6 @@ const useStore = create<StoreState>((set, get) => ({
 
   setAuth: (user, token) => {
     try {
-      const ONE_HOUR_MS = 60 * 60 * 1000;
       const loginTime = Date.now();
 
       // Decode JWT expiry if available
@@ -206,11 +205,7 @@ const useStore = create<StoreState>((set, get) => ({
         if (payload.exp) jwtExpiration = payload.exp * 1000;
       } catch { /* ignore malformed JWT */ }
 
-      // Enforce strict 1-hour cap from login time (client-side rate limit)
-      const maxAllowed = loginTime + ONE_HOUR_MS;
-      const expiration = jwtExpiration
-        ? Math.min(jwtExpiration, maxAllowed)
-        : maxAllowed;
+      const expiration = jwtExpiration ?? (loginTime + 60 * 60 * 1000);
 
       localStorage.setItem('standor_user', JSON.stringify(user));
       localStorage.setItem('standor_token', token);

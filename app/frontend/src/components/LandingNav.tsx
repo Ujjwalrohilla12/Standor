@@ -118,9 +118,7 @@ export default function LandingNav() {
                     onClick={() => handleLink(link.href)}
                     className={cn(
                       "relative px-3 py-2 text-[11px] font-bold tracking-widest uppercase transition-colors",
-                      isActive
-                        ? "text-white"
-                        : "text-ns-grey-400 hover:text-white",
+                      isActive ? "text-white" : "text-ns-grey-400",
                     )}
                     aria-label={`Go to ${link.label}`}
                   >

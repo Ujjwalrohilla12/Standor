@@ -65,13 +65,13 @@ export default function SpotlightCard({ children, className = '', accentColor }:
             className={`relative overflow-hidden group ${className}`}
             style={{
                 transform: hovered
-                    ? `perspective(700px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateY(-6px) scale(1.015)`
+                    ? `perspective(700px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateY(-8px) scale(1.018)`
                     : 'perspective(700px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)',
-                transition: 'transform 180ms cubic-bezier(.22,.9,.3,1), box-shadow 200ms ease',
+                transition: 'transform 240ms cubic-bezier(.22,.9,.3,1), box-shadow 240ms cubic-bezier(.22,.9,.3,1), border-color 240ms cubic-bezier(.22,.9,.3,1)',
                 transformStyle: 'preserve-3d',
                 boxShadow: hovered
-                    ? `0 22px 70px rgba(0,0,0,0.55), 0 0 0 1px ${accentColor ? accentColor + '30' : 'rgba(255,255,255,0.10)'}`
-                    : '0 10px 40px rgba(0,0,0,0.3)',
+                    ? `0 24px 70px rgba(196,199,206,0.10), 0 0 0 1px ${accentColor ? accentColor + '35' : 'rgba(255,255,255,0.12)'}, 0 0 36px ${accentColor ? accentColor + '18' : 'rgba(255,255,255,0.08)'}`
+                    : '0 10px 40px rgba(0,0,0,0.24)',
                 willChange: hovered ? 'transform' : undefined,
             }}
         >
@@ -91,8 +91,8 @@ export default function SpotlightCard({ children, className = '', accentColor }:
                 ref={borderRef}
                 className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 group-hover:opacity-100 z-0"
                 style={{
-                    transition: 'opacity 200ms ease',
-                    boxShadow: `inset 0 0 0 1px ${accentColor ? accentColor + '45' : 'rgba(255,255,255,0.14)'}`,
+                    transition: 'opacity 240ms ease',
+                    boxShadow: `inset 0 0 0 1px ${accentColor ? accentColor + '55' : 'rgba(255,255,255,0.16)'}`,
                 }}
             />
 
@@ -101,8 +101,8 @@ export default function SpotlightCard({ children, className = '', accentColor }:
                 <div
                     className="pointer-events-none absolute inset-0 rounded-[inherit] z-0"
                     style={{
-                        background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,0.045) 0%, transparent 55%)`,
-                        transition: 'background 180ms ease',
+                        background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,0.055) 0%, ${accentColor ? accentColor + '10' : 'transparent'} 30%, transparent 60%)`,
+                        transition: 'background 240ms ease',
                     }}
                 />
             )}

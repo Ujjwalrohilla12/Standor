@@ -24,6 +24,7 @@ import {
   Link,
   Check,
   Monitor,
+  Zap,
 } from "lucide-react";
 import { CardSkeleton, TableSkeleton } from "../components/Skeletons";
 import {
@@ -302,8 +303,16 @@ export default function Dashboard() {
               New Coding Meeting
             </button>
             <button
-              onClick={() => navigate("/virtual-meet")}
+              onClick={() => navigate("/features/ai-analysis")}
               className="flex items-center justify-center gap-2 px-4 py-2.5 bg-accent text-white rounded-lg font-semibold text-sm hover:bg-accent-secondary transition-colors w-full sm:w-auto"
+              title="Advanced AI-powered code analysis with feedback reports and progression tracking"
+            >
+              <Zap size={16} />
+              AI Code Analysis
+            </button>
+            <button
+              onClick={() => navigate("/virtual-meet")}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-600 text-white rounded-lg font-semibold text-sm hover:bg-amber-700 transition-colors w-full sm:w-auto"
               title="Start a video interview meeting without code collaboration"
             >
               <Monitor size={16} />

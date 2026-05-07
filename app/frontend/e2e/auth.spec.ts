@@ -28,7 +28,7 @@ test.describe('Authentication flows', () => {
     await page.locator('input[type="password"]').fill('wrongpassword');
     await page.getByRole('button', { name: /sign in/i }).click();
     // Expect some error feedback
-    await expect(page.getByText(/invalid/i).first()).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/login failed/i).first()).toBeVisible({ timeout: 5000 });
   });
 
   test('protected route redirects to login when unauthenticated', async ({ page }) => {

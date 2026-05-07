@@ -19,16 +19,18 @@
   --text: #E6EEF8;
   --muted: #A1AAB2;
   
-  /* Accent Color - Teal for professional tech/enterprise feel */
-  --accent: #0EA5A4;
-  --accent-hover: #0DBBB9;
-  --accent-rgb: 14, 165, 164;
+  /* Accent Color - flattened to silver/graphite for premium monochrome look */
+  --accent: #C4C7CE; /* primary silver */
+  --accent-secondary: #9CA0A6; /* mid graphite */
+  --accent-hover: #E6E9EB; /* light silver hover */
+  --accent-rgb: 196, 199, 206;
   
   /* Card Colors */
-  --card-bg: rgba(255, 255, 255, 0.02);
-  --card-border: rgba(255, 255, 255, 0.06);
-  --card-hover-bg: rgba(255, 255, 255, 0.04);
-  --card-hover-border: rgba(255, 255, 255, 0.12);
+  /* Slightly darker glass panels for a premium monochrome glass feel */
+  --card-bg: rgba(255, 255, 255, 0.018);
+  --card-border: rgba(255, 255, 255, 0.055);
+  --card-hover-bg: rgba(255, 255, 255, 0.035);
+  --card-hover-border: rgba(255, 255, 255, 0.10);
   
   /* Focus Ring */
   --focus-ring: rgba(255, 255, 255, 0.14);

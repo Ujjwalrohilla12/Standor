@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --port 5173",
+    "dev": "npm run build && npx --yes serve -s build -l 5173",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest --run",
@@ -102,6 +102,7 @@
     "fast-check": "^4.6.0",
     "happy-dom": "^20.8.3",
     "jsdom": "^28.1.0",
+    "monaco-editor": "^0.55.1",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.6.2",

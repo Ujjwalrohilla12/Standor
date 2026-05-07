@@ -1,38 +1,80 @@
 import { test, expect } from '@playwright/test';
 
 const BASE = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173';
+const HOST_USER = {
+    id: 'e2e-host-1',
+    email: 'host@example.com',
+    name: 'E2E Host',
+    role: 'USER' as const,
+};
+
+const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ3MjUzNjgwMDB9.signature';
+const EXPIRATION = Date.now() + 60 * 60 * 1000;
+
+async function seedAuth(page: any) {
+    await page.addInitScript(({ user, token, expiration }) => {
+        localStorage.setItem('standor_user', JSON.stringify(user));
+        localStorage.setItem('standor_token', token);
+        localStorage.setItem('standor_token_expiration', String(expiration));
+    }, { user: HOST_USER, token: TOKEN, expiration: EXPIRATION });
+}
 
 test.describe('Interview Creation and Execution', () => {
     test('should create a room, type code, and execute it', async ({ page }) => {
-        // 1. Visit Dashboard
-        await page.goto(`${BASE}/dashboard`);
+        await seedAuth(page);
 
-        // If redirected to login, login first
-        if (page.url().includes('/login')) {
-            await page.locator('input[type="email"]').fill('test@example.com');
-            await page.locator('input[type="password"]').fill('password123');
-            await page.getByRole('button', { name: /sign in/i }).click();
-            await expect(page).toHaveURL(/\/dashboard/);
-        }
+        const meetingCode = 'e2e-interview';
+        const roomId = 'room-e2e-interview';
 
-        // 2. Open Create Session Modal
-        await page.getByTestId('create-session-btn').click();
+        await page.route('**/api/meetings/e2e-interview', async (route) => {
+            await route.fulfill({
+                json: {
+                    id: roomId,
+                    callId: meetingCode,
+                    roomId,
+                    hostId: HOST_USER.id,
+                    status: 'ACTIVE',
+                    problem: 'Two Sum',
+                    difficulty: 'MEDIUM',
+                    language: 'javascript',
+                },
+            });
+        });
 
-        // 3. Fill and Submit
-        await page.getByPlaceholder(/Implement a LRU Cache/i).fill('E2E Test Session');
-        // Using simple locator since I didn't add exact testids for these selects yet
-        await page.getByRole('button', { name: /start session/i }).click();
+        await page.route('**/api/problems/Two%20Sum', async (route) => {
+            await route.fulfill({
+                json: {
+                    title: 'Two Sum',
+                    difficulty: 'EASY',
+                    category: 'Array',
+                    tags: ['array', 'hash-map'],
+                    description: 'Find two numbers that add up to the target.',
+                    examples: [],
+                    starterCode: {},
+                    testCases: [],
+                },
+            });
+        });
 
-        // 4. Verify Redirection to Session Room
-        await expect(page).toHaveURL(/\/session\/[a-zA-Z0-9]+/, { timeout: 10000 });
+        await page.route('**/api/problems/Two%20Sum/run', async (route) => {
+            await route.fulfill({
+                json: {
+                    passed: 2,
+                    total: 2,
+                    results: [
+                        { input: '[2,7,11,15], 9', expected: '[0,1]', passed: true, hidden: false, stdout: 'ok', stderr: null },
+                        { input: '[3,2,4], 6', expected: '[1,2]', passed: true, hidden: false, stdout: 'ok', stderr: null },
+                    ],
+                },
+            });
+        });
 
-        // Wait for the room to load (spinner -> editor)
-        await expect(page.locator('.monaco-editor')).toBeVisible({ timeout: 15000 });
+        await page.goto(`${BASE}/meeting/${meetingCode}`);
 
-        // 5. Execute Code
-        await page.getByRole('button', { name: /run code/i }).click();
+        await page.getByRole('button', { name: /code off/i }).click();
+        await expect(page.getByRole('button', { name: /run code/i }).first()).toBeVisible({ timeout: 15000 });
+        await page.getByRole('button', { name: /run code/i }).first().click();
 
-        // Since execution requires backend connecting to Piston, we just ensure the button shows loading state or doesn't crash
-        // In a real E2E environment we would mock Piston or wait for results.
+        await expect(page.getByText(/Exit: 0/i)).toBeVisible({ timeout: 15000 });
     });
 });

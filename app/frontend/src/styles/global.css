@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
 * {
   box-sizing: border-box;
@@ -35,8 +35,9 @@ button {
     transform var(--ns-duration-micro) var(--ns-ease),
     opacity var(--ns-duration-micro) var(--ns-ease);
   outline: none;
-  will-change: transform;
   -webkit-tap-highlight-color: transparent;
+  position: relative;
+  isolation: isolate;
 }
 
 button:active {
@@ -46,6 +47,15 @@ button:active {
 button:focus-visible {
   outline: 1px solid var(--ns-white);
   outline-offset: 2px;
+}
+
+/* Suppress focus outline for mouse clicks only - keyboard nav still shows */
+button::-moz-focus-inner {
+  border: 0;
+}
+
+button:focus:not(:focus-visible) {
+  outline: none;
 }
 
 input,
@@ -190,14 +200,16 @@ html {
 }
 
 .btn-sweep::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(105deg,
-      transparent 35%,
-      rgba(255, 255, 255, 0.15) 45%,
-      rgba(255, 255, 255, 0.15) 55%,
-      transparent 65%);
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.15) 45%,
+    rgba(255, 255, 255, 0.15) 55%,
+    transparent 65%
+  );
   transform: translateX(-120%);
   transition: transform var(--ns-duration-section) var(--ns-ease);
   pointer-events: none;
@@ -242,6 +254,7 @@ html {
     var(--ns-shadow-md),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   transition: all var(--ns-duration-card) var(--ns-ease);
+  will-change: transform;
 }
 
 .btn-cta:hover {

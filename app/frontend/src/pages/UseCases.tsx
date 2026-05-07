@@ -11,7 +11,7 @@ const USE_CASES = [
       { text: 'Consistent rubric across candidates', icon: ShieldCheck },
       { text: 'AI-generated scorecard per session', icon: FileCheck }
     ],
-    color: '#3B82F6',
+    color: '#c4c7ce',
     path: '/how-it-works'
   },
   {
@@ -23,7 +23,7 @@ const USE_CASES = [
       { text: 'Async review from session replay', icon: Eye },
       { text: 'ATS integration for score push', icon: Zap }
     ],
-    color: '#22C55E',
+    color: '#aab0b6',
     path: '/integrations'
   },
   {
@@ -35,7 +35,7 @@ const USE_CASES = [
       { text: 'Live hints without giving answers', icon: TrendingUp },
       { text: 'Communication score in AI report', icon: Eye }
     ],
-    color: '#FBBF24',
+    color: '#9ca0a6',
     path: '/problems'
   },
   {
@@ -47,7 +47,7 @@ const USE_CASES = [
       { text: 'Portable PDF report export', icon: Clock },
       { text: 'No account required for candidate', icon: Zap }
     ],
-    color: '#06B6D4',
+    color: '#bfc5cb',
     path: '/how-it-works'
   },
   {
@@ -59,7 +59,7 @@ const USE_CASES = [
       { text: 'Blind grading via anonymous rooms', icon: Shield },
       { text: 'Exportable audit trail', icon: FileCheck }
     ],
-    color: '#8B5CF6',
+    color: '#9ca0a6',
     path: '/training'
   },
   {
@@ -71,7 +71,7 @@ const USE_CASES = [
       { text: 'GDPR-compliant data handling', icon: Scale },
       { text: 'On-premise deployment option', icon: Database }
     ],
-    color: '#EF4444',
+    color: '#8f9499',
     path: '/security'
   },
 ];
@@ -166,10 +166,10 @@ export default function UseCases() {
           <h3 className="text-2xl font-bold text-white mb-10">Ready to see Standor in action?</h3>
           <button
             onClick={() => navigate('/register')}
-            className="group px-8 sm:px-12 py-4 sm:py-5 bg-white text-black rounded-full font-bold hover:bg-ns-grey-100 transition-all flex items-center gap-2 mx-auto shadow-2xl"
+            className="ns-btn-primary mx-auto inline-flex items-center gap-2 px-8 sm:px-12 py-4 sm:py-5 rounded-full font-bold"
           >
             Get Started
-            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+            <ArrowRight size={20} className="transform group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { Server } from "socket.io";
 import { ENV } from "./env.js";
+import { finalizeMeetingByCode } from "./meetingFinalize.js";
 
 let io;
 const rooms = new Map(); // roomId -> Set of { socketId, userId, name }
@@ -384,12 +385,21 @@ export const initSocket = (server) => {
     });
 
     // Host ends meeting for all
-    socket.on("meeting:end-for-all", ({ code }) => {
+    socket.on("meeting:end-for-all", async ({ code }) => {
       const meeting = getMeetingState(code);
       const info = socketMeetingMap.get(socket.id);
       if (!info || meeting.hostId !== info.userId) return;
 
       io.to(`meeting-${code}`).emit("meeting:ended");
+
+      try {
+        await finalizeMeetingByCode({
+          code,
+          trigger: "host_end_for_all",
+        });
+      } catch (err) {
+        console.error("Auto finalize on host end failed:", err?.message || err);
+      }
 
       // Cleanup
       meeting.participants.forEach((p) => {
@@ -845,6 +855,13 @@ export const initSocket = (server) => {
             meeting.participants.length === 0 &&
             meeting.pendingParticipants.length === 0
           ) {
+            finalizeMeetingByCode({
+              code: meetingCode,
+              trigger: "auto_room_empty_disconnect",
+            }).catch((err) => {
+              console.error("Auto finalize on empty room failed:", err?.message || err);
+            });
+
             meetings.delete(meetingCode);
           }
         }

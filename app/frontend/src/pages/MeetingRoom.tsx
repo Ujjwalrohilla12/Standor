@@ -41,6 +41,7 @@ import {
 import useStore from "../store/useStore";
 import {
   roomsApi,
+  sessionsApi,
   meetingsApi,
   codeExecutionApi,
   problemsApi,
@@ -193,6 +194,8 @@ function MeetingInner({
   // AI analysis state
   const [analyzing, setAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<AIAnalysis | null>(null);
+  const [liveTranscriptCount, setLiveTranscriptCount] = useState(0);
+  const [finalizingMeeting, setFinalizingMeeting] = useState(false);
 
   // Chat state (from SessionView)
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -236,6 +239,7 @@ function MeetingInner({
   >([]);
   const [activeWriters, setActiveWriters] = useState<string[]>([]);
   const localTypingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const audioRecorderRef = useRef<MediaRecorder | null>(null);
 
   // Auto-save state
   const lastSavedCode = useRef("");
@@ -467,6 +471,56 @@ function MeetingInner({
       .then(setProblem)
       .catch(() => {});
   }, [meetingInfo.problem]);
+
+  // Real-time audio chunk capture and upload for meeting analysis
+  useEffect(() => {
+    if (!meetingInfo.id || !admitted || !localStream || !audioEnabled) return;
+    if (audioRecorderRef.current) return;
+    if (typeof MediaRecorder === "undefined") return;
+
+    const sourceTracks = localStream.getAudioTracks();
+    if (!sourceTracks.length) return;
+
+    const clonedTracks = sourceTracks.map((track) => track.clone());
+    const audioOnlyStream = new MediaStream(clonedTracks);
+
+    let recorder: MediaRecorder;
+    try {
+      const preferredMime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+        ? "audio/webm;codecs=opus"
+        : "audio/webm";
+      recorder = new MediaRecorder(audioOnlyStream, { mimeType: preferredMime });
+    } catch {
+      clonedTracks.forEach((track) => track.stop());
+      return;
+    }
+
+    audioRecorderRef.current = recorder;
+
+    recorder.ondataavailable = async (event) => {
+      if (!meetingInfo.id || !event.data || event.data.size < 2048) return;
+      try {
+        await sessionsApi.uploadAudioChunk(
+          meetingInfo.id,
+          event.data,
+          isHost ? "interviewer" : "candidate",
+        );
+        setLiveTranscriptCount((prev) => prev + 1);
+      } catch {
+        // Keep meeting uninterrupted if chunk upload fails
+      }
+    };
+
+    recorder.start(15000);
+
+    return () => {
+      if (audioRecorderRef.current && audioRecorderRef.current.state !== "inactive") {
+        audioRecorderRef.current.stop();
+      }
+      audioRecorderRef.current = null;
+      clonedTracks.forEach((track) => track.stop());
+    };
+  }, [meetingInfo.id, admitted, localStream, audioEnabled, isHost]);
 
   // ==========================================
   // Yjs collaborative editing (from SessionView)
@@ -946,9 +1000,24 @@ function MeetingInner({
     socket?.emit("meeting:deny", { code: meetingCode, pendingUserId });
   };
 
-  const handleEndMeeting = () => {
-    if (window.confirm("End the meeting for everyone?")) {
+  const handleEndMeeting = async () => {
+    if (!window.confirm("End the meeting for everyone?")) return;
+
+    setFinalizingMeeting(true);
+    try {
+      if (meetingInfo.id) {
+        await sessionsApi.finalizeMeeting(meetingInfo.id);
+        await roomsApi.end(meetingInfo.id);
+      }
+      toast.success("Meeting finalized. Report email sent to interviewer and generic email sent to candidate.");
+    } catch {
+      toast.error("Meeting ended, but report finalization failed. You can retry from session report endpoint.");
+    } finally {
+      if (audioRecorderRef.current && audioRecorderRef.current.state !== "inactive") {
+        audioRecorderRef.current.stop();
+      }
       socket?.emit("meeting:end-for-all", { code: meetingCode });
+      setFinalizingMeeting(false);
     }
   };
 
@@ -1043,6 +1112,11 @@ function MeetingInner({
         <span className="text-white font-semibold text-sm truncate max-w-xs">
           {meetingCode}
         </span>
+        {liveTranscriptCount > 0 && (
+          <span className="text-[10px] px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            Audio analyzed: {liveTranscriptCount} chunks
+          </span>
+        )}
         <button
           onClick={() => {
             navigator.clipboard.writeText(
@@ -1056,9 +1130,10 @@ function MeetingInner({
           <Share size={12} />
         </button>
 
+                  disabled={finalizingMeeting}
         {meetingInfo.problem && meetingInfo.problem !== "Meeting" && (
           <>
-            <div className="w-px h-4 bg-border" />
+                  {finalizingMeeting ? "Finalizing..." : "End Meeting"}
             <span className="hidden sm:inline text-xs text-neutral-400 font-medium truncate max-w-[180px]">
               {meetingInfo.problem}
             </span>

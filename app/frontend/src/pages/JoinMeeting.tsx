@@ -26,7 +26,9 @@ export default function JoinMeeting() {
     const { user, setAuth } = useStore();
 
     const [code, setCode] = useState(urlCode || '');
-    const [guestName, setGuestName] = useState('');
+    const [joinName, setJoinName] = useState(user?.name || '');
+    const [hostEmail, setHostEmail] = useState(user?.email || '');
+    const [candidateEmail, setCandidateEmail] = useState('');
     const [isJoining, setIsJoining] = useState(false);
     const [step, setStep] = useState<'CODE' | 'PREVIEW' | 'WAITING'>(urlCode ? 'PREVIEW' : 'CODE');
 
@@ -65,6 +67,15 @@ export default function JoinMeeting() {
     }, []);
 
     useEffect(() => {
+        if (user?.name && !joinName) {
+            setJoinName(user.name);
+        }
+        if (user?.email && !hostEmail) {
+            setHostEmail(user.email);
+        }
+    }, [user, joinName, hostEmail]);
+
+    useEffect(() => {
         if (step === 'WAITING' && code) {
             const socket = io(API_BASE, {
                 auth: { token: localStorage.getItem('standor_token') }
@@ -74,7 +85,7 @@ export default function JoinMeeting() {
                 socket.emit('join-meeting-waiting-room', {
                     code: code.trim(),
                     userId: user?.id || (user as any)?._id,
-                    name: user?.name || guestName.trim(),
+                    name: joinName.trim() || user?.name || '',
                 });
             });
 
@@ -93,7 +104,7 @@ export default function JoinMeeting() {
                 socket.disconnect();
             };
         }
-    }, [step, code, navigate, micOn, camOn]);
+    }, [step, code, navigate, micOn, camOn, user, joinName]);
 
     useEffect(() => {
         if (step === 'PREVIEW') {
@@ -123,17 +134,31 @@ export default function JoinMeeting() {
         setIsJoining(true);
         try {
             const meetingCode = code.trim();
-            let joinData = { joined: true };
+            const resolvedName = joinName.trim();
+            const resolvedHostEmail = hostEmail.trim();
+            const resolvedCandidateEmail = candidateEmail.trim();
 
             if (!user) {
                 // Guest Join
-                if (!guestName.trim()) {
+                if (!resolvedName) {
                     toast.error('Please enter your name');
                     setIsJoining(false);
                     return;
                 }
+                if (!resolvedHostEmail) {
+                    toast.error('Please enter the host email');
+                    setIsJoining(false);
+                    return;
+                }
+                if (!resolvedCandidateEmail) {
+                    toast.error('Please enter the candidate email');
+                    setIsJoining(false);
+                    return;
+                }
                 const { data } = await axios.post(`${API_BASE}/api/meetings/${meetingCode}/guest-join`, {
-                    name: guestName.trim()
+                    name: resolvedName,
+                    hostEmail: resolvedHostEmail,
+                    candidateEmail: resolvedCandidateEmail,
                 });
                 setAuth(data.user, data.token);
                 localStorage.setItem('standor_token', data.token);
@@ -144,7 +169,10 @@ export default function JoinMeeting() {
                 }
             } else {
                 // Authenticated Join
-                const { data } = await axios.post(`${API_BASE}/api/meetings/${meetingCode}/join`, {}, {
+                const { data } = await axios.post(`${API_BASE}/api/meetings/${meetingCode}/join`, {
+                    hostEmail: resolvedHostEmail,
+                    candidateEmail: resolvedCandidateEmail,
+                }, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('standor_token')}` }
                 });
 
@@ -155,7 +183,13 @@ export default function JoinMeeting() {
             }
 
             // Store device preferences in local storage for the meeting room
-            localStorage.setItem('standor_meeting_prefs', JSON.stringify({ micOn, camOn }));
+            localStorage.setItem('standor_meeting_prefs', JSON.stringify({
+                micOn,
+                camOn,
+                joinName: resolvedName,
+                hostEmail: resolvedHostEmail,
+                candidateEmail: resolvedCandidateEmail,
+            }));
 
             navigate(`/meeting/${meetingCode}`);
         } catch (err: any) {
@@ -294,28 +328,37 @@ export default function JoinMeeting() {
                                     <div className="space-y-6">
                                         <div>
                                             <h3 className="text-lg font-semibold mb-2">Participant Details</h3>
-                                            {user ? (
-                                                <div className="flex items-center gap-4 py-3">
-                                                    <div className="w-12 h-12 rounded-full bg-white/[0.05] border border-white/[0.1] flex items-center justify-center">
-                                                        <span className="text-lg font-bold">{(user as any).name?.[0] || 'U'}</span>
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-semibold">{(user as any).name}</p>
-                                                        <p className="text-xs text-white/40">{user.email}</p>
-                                                    </div>
-                                                </div>
-                                            ) : (
+                                            <div className="space-y-3">
                                                 <div className="relative group">
                                                     <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white/60 transition-colors" size={18} />
                                                     <input
                                                         type="text"
-                                                        placeholder="Your Name (for guests)"
-                                                        value={guestName}
-                                                        onChange={(e) => setGuestName(e.target.value)}
+                                                        placeholder="Your Name"
+                                                        value={joinName}
+                                                        onChange={(e) => setJoinName(e.target.value)}
                                                         className="w-full bg-black/40 border border-white/[0.1] rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-white/30 transition-all"
                                                     />
                                                 </div>
-                                            )}
+                                                <input
+                                                    type="email"
+                                                    placeholder="Host Email"
+                                                    value={hostEmail}
+                                                    onChange={(e) => setHostEmail(e.target.value)}
+                                                    className="w-full bg-black/40 border border-white/[0.1] rounded-2xl py-4 px-4 focus:outline-none focus:border-white/30 transition-all"
+                                                />
+                                                <input
+                                                    type="email"
+                                                    placeholder="Candidate Email"
+                                                    value={candidateEmail}
+                                                    onChange={(e) => setCandidateEmail(e.target.value)}
+                                                    className="w-full bg-black/40 border border-white/[0.1] rounded-2xl py-4 px-4 focus:outline-none focus:border-white/30 transition-all"
+                                                />
+                                                {user ? (
+                                                    <p className="text-xs text-white/30">
+                                                        Signed in as {(user as any).name} ({user.email})
+                                                    </p>
+                                                ) : null}
+                                            </div>
                                         </div>
 
                                         <div className="space-y-3 pt-4">

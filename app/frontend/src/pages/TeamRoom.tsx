@@ -70,7 +70,7 @@ interface StatCardProps {
   accent?: string;
 }
 
-function StatCard({ label, value, icon, accent = 'text-[#137fec]' }: StatCardProps) {
+function StatCard({ label, value, icon, accent = 'text-[#4b4f55]' }: StatCardProps) {
   return (
     <div className="bg-[#0D1117] border border-white/[0.08] rounded-xl p-5 flex items-center gap-4">
       <div className={`w-10 h-10 rounded-lg flex items-center justify-center bg-white/[0.04] ${accent}`}>
@@ -137,7 +137,7 @@ function ActiveCard({ room, onCopy, copied }: ActiveCardProps) {
       <div className="flex items-center gap-2 mt-auto">
         <button
           onClick={() => navigate(`/session/${room.roomId}`)}
-          className="flex-1 flex items-center justify-center gap-2 bg-[#137fec] hover:bg-[#1a8fff] text-white text-sm font-semibold py-2 rounded-lg transition-colors duration-150"
+          className="flex-1 ns-btn-primary flex items-center justify-center gap-2 py-2"
         >
           <Play size={14} />
           Join
@@ -168,7 +168,7 @@ function CompletedRow({ room }: CompletedRowProps) {
   return (
     <tr className="border-t border-white/[0.06] hover:bg-white/[0.02] transition-colors duration-100 group">
       <td className="py-3 pl-4 pr-2">
-        <span className="text-white text-sm font-medium group-hover:text-[#137fec] transition-colors duration-150">
+        <span className="text-white text-sm font-medium group-hover:text-[#4b4f55] transition-colors duration-150">
           {room.problem}
         </span>
       </td>
@@ -201,7 +201,7 @@ function CompletedRow({ room }: CompletedRowProps) {
       <td className="py-3 pl-2 pr-4 text-right">
         <button
           onClick={() => navigate(`/replay/${room.roomId}`)}
-          className="inline-flex items-center gap-1.5 text-xs text-[#137fec] hover:text-white border border-[#137fec]/30 hover:border-[#137fec] hover:bg-[#137fec]/10 px-3 py-1.5 rounded-lg transition-all duration-150"
+          className="inline-flex items-center gap-1.5 text-xs text-[#4b4f55] hover:text-white border border-[#4b4f55]/30 hover:border-[#4b4f55] hover:bg-[#4b4f55]/10 px-3 py-1.5 rounded-lg transition-all duration-150"
         >
           <Video size={12} />
           Replay
@@ -217,14 +217,11 @@ function EmptyState({ onNew }: { onNew: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-24 gap-6 text-center">
       {/* Illustration */}
-      <div className="relative">
-        <div className="w-24 h-24 rounded-2xl bg-[#137fec]/10 border border-[#137fec]/20 flex items-center justify-center">
-          <Zap size={36} className="text-[#137fec]" />
+        <div className="relative">
+        <div className="w-24 h-24 rounded-2xl bg-[#4b4f55]/8 border border-[#4b4f55]/14 flex items-center justify-center">
+          <Zap size={36} className="text-[#4b4f55]" />
         </div>
-        <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#af25f4]/20 border border-[#af25f4]/40 flex items-center justify-center">
-          <span className="text-[#af25f4] text-xs font-bold">+</span>
         </div>
-      </div>
       <div>
         <h3 className="text-white text-xl font-semibold mb-2">No interview rooms yet</h3>
         <p className="text-[#6B7178] text-sm max-w-xs">
@@ -233,7 +230,7 @@ function EmptyState({ onNew }: { onNew: () => void }) {
       </div>
       <button
         onClick={onNew}
-        className="flex items-center gap-2 bg-[#137fec] hover:bg-[#1a8fff] text-white font-semibold px-6 py-3 rounded-xl transition-colors duration-150"
+        className="flex items-center gap-2 ns-btn-primary"
       >
         <Plus size={16} />
         Create your first interview session
@@ -405,7 +402,7 @@ export default function TeamRoom() {
               {/* "New room" ghost card */}
               <button
                 onClick={() => navigate('/create-session')}
-                className="w-[75vw] max-w-[200px] sm:w-[200px] bg-[#0D1117] border border-dashed border-white/[0.12] rounded-2xl p-5 flex flex-col items-center justify-center gap-3 flex-shrink-0 text-[#6B7178] hover:border-[#137fec]/50 hover:text-[#137fec] hover:bg-[#137fec]/[0.04] transition-all duration-200"
+                className="w-[75vw] max-w-[200px] sm:w-[200px] bg-[#0D1117] border border-dashed border-white/[0.12] rounded-2xl p-5 flex flex-col items-center justify-center gap-3 flex-shrink-0 text-[#3b3f44] hover:border-[#4b4f55]/40 hover:text-[#4b4f55] hover:bg-[#4b4f55]/8 transition-all duration-200"
               >
                 <div className="w-10 h-10 rounded-lg border border-dashed border-current flex items-center justify-center">
                   <Plus size={18} />

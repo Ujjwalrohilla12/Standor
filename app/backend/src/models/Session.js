@@ -17,6 +17,21 @@ const aiAnalysisSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const feedbackReportSchema = new mongoose.Schema(
+  {
+    audience: { type: String, enum: ["interviewer", "candidate", "system"], default: "system" },
+    summary: { type: String, default: "" },
+    strengths: [String],
+    improvementAreas: [String],
+    recommendations: [String],
+    score: { type: Number, default: 0 },
+    generatedAt: { type: Date, default: Date.now },
+    analysis: { type: aiAnalysisSchema, default: null },
+    snapshotCount: { type: Number, default: 0 },
+  },
+  { _id: false }
+);
+
 const codeSnapshotSchema = new mongoose.Schema(
   {
     content: { type: String, required: true },
@@ -91,13 +106,40 @@ const sessionSchema = new mongoose.Schema(
       ref: "User",
       default: null,
     },
+    hostEmail: {
+      type: String,
+      default: "",
+    },
+    candidateEmail: {
+      type: String,
+      default: "",
+    },
     code: {
       type: String,
       default: "",
     },
     messages: [messageSchema],
     analyses: [aiAnalysisSchema],
+    feedbackReports: [feedbackReportSchema],
     codeSnapshots: [codeSnapshotSchema],
+    // Transcripts produced by audio transcription (real-time chunks)
+    transcripts: [
+      {
+        speaker: { type: String, default: 'unknown' },
+        text: { type: String, default: '' },
+        timestamp: { type: Date, default: Date.now },
+      },
+    ],
+    // Meeting-level summary and performance report generated after session end
+    meetingSummary: {
+      type: String,
+      default: '',
+    },
+    performanceReport: {
+      type: Object,
+      default: null,
+    },
+    hostNotified: { type: Boolean, default: false },
     startedAt: {
       type: Date,
       default: Date.now,

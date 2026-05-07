@@ -429,7 +429,7 @@ describe('Frontend Store Property Tests', () => {
         (msOffset, userData) => {
           // Calculate expiration time (past or future)
           const expirationTime = Date.now() + msOffset;
-          const isExpired = msOffset < 0;
+          const isExpired = msOffset <= 0;
           
           // Set up localStorage with token, user, and expiration data
           localStorage.clear();

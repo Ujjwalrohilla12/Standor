@@ -82,7 +82,12 @@ const Replay = lazy(() => import("./pages/Replay"));
 const Lobby = lazy(() => import("./pages/Lobby"));
 const JoinMeeting = lazy(() => import("./pages/JoinMeeting"));
 const MeetingRoom = lazy(() => import("./pages/MeetingRoom"));
-const VirtualMeetPage = lazy(() => import("./features/virtual-meet/VirtualMeetPage"));
+const VirtualMeetPage = lazy(
+  () => import("./features/virtual-meet/VirtualMeetPage"),
+);
+const AiAnalysisFeature = lazy(() => import('./features/ai-analysis/AiAnalysisFeature'));
+const CodePage = lazy(() => import("./pages/Code"));
+const Benefits = lazy(() => import("./pages/Benefits"));
 
 // ───── Apply accessibility on load ─────
 initAccessibility();
@@ -144,6 +149,8 @@ const marketingRoutes = [
   "/status",
   "/accessibility",
   "/about",
+  "/code",
+  "/benefits",
   "/security",
   "/roi",
   "/legal",
@@ -171,6 +178,38 @@ function MarketingRoute({
   );
 }
 
+function SectionRoute({
+  sectionId,
+  title,
+  description,
+}: {
+  sectionId: string;
+  title?: string;
+  description?: string;
+}) {
+  const location = useLocation();
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const offset = 56;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - offset;
+        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+      }
+    }, 250);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [location.pathname, sectionId]);
+
+  return (
+    <MarketingRoute title={title} description={description}>
+      <Landing />
+    </MarketingRoute>
+  );
+}
+
 function AppContent() {
   const location = useLocation();
   const isAuthPage = authRoutes.includes(location.pathname);
@@ -186,7 +225,12 @@ function AppContent() {
   const isMeetingRoute = location.pathname.startsWith("/meeting/");
   const isJoinRoute = location.pathname.startsWith("/join");
   const isVirtualMeetRoute = location.pathname.startsWith("/virtual-meet");
-  const isFullScreenRoute = isDemoRoute || isCodePairRoute || isMeetingRoute || isJoinRoute || isVirtualMeetRoute;
+  const isFullScreenRoute =
+    isDemoRoute ||
+    isCodePairRoute ||
+    isMeetingRoute ||
+    isJoinRoute ||
+    isVirtualMeetRoute;
 
   useEffect(() => {
     trackPageview(location.pathname);
@@ -210,318 +254,366 @@ function AppContent() {
             </Routes>
           </Suspense>
         ) : (
-        <PageTransition>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              {/* Marketing */}
-              <Route
-                path="/"
-                element={
-                  <MarketingRoute>
-                    <Landing />
-                  </MarketingRoute>
-                }
-              />
-              <Route path="/join" element={<JoinMeeting />} />
-              <Route path="/join/:code" element={<JoinMeeting />} />
-              <Route path="/meeting/:code" element={<MeetingRoom />} />
-              <Route path="/demo" element={<Demo />} />
-              <Route
-                path="/about"
-                element={
-                  <MarketingRoute title="About — Standor">
-                    <About />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/how-it-works"
-                element={
-                  <MarketingRoute title="How It Works — Standor">
-                    <HowItWorks />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/use-cases"
-                element={
-                  <MarketingRoute title="Use Cases — Standor">
-                    <UseCases />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/customers"
-                element={
-                  <MarketingRoute title="Customers — Standor">
-                    <Customers />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/faq"
-                element={
-                  <MarketingRoute title="FAQ — Standor">
-                    <FAQ />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/docs"
-                element={
-                  <MarketingRoute title="Documentation — Standor">
-                    <Docs />
-                  </MarketingRoute>
-                }
-              />
-              <Route path="/docs/*" element={<Navigate to="/docs" replace />} />
-              <Route
-                path="/developers"
-                element={
-                  <MarketingRoute title="API & SDKs — Standor">
-                    <ApiSdks />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/integrations"
-                element={
-                  <MarketingRoute title="Integrations — Standor">
-                    <Integrations />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/privacy"
-                element={
-                  <MarketingRoute title="Privacy Policy — Standor">
-                    <Privacy />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/terms"
-                element={
-                  <MarketingRoute title="Terms of Service — Standor">
-                    <Terms />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/system-status"
-                element={
-                  <MarketingRoute title="Status — Standor">
-                    <Status />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/status"
-                element={
-                  <MarketingRoute title="Status — Standor">
-                    <Status />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/accessibility"
-                element={
-                  <MarketingRoute title="Accessibility — Standor">
-                    <AccessibilityPage />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/security"
-                element={
-                  <MarketingRoute title="Security — Standor">
-                    <Security />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/roi"
-                element={
-                  <MarketingRoute title="ROI Calculator — Standor">
-                    <ROICalculator />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/gallery"
-                element={
-                  <MarketingRoute title="Product Gallery — Standor">
-                    <Gallery />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/legal"
-                element={
-                  <MarketingRoute title="Legal — Standor">
-                    <Legal />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/privacy-data"
-                element={
-                  <MarketingRoute title="Privacy & Data Handling — Standor">
-                    <PrivacyData />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/training"
-                element={
-                  <MarketingRoute title="Security Training — Standor">
-                    <Training />
-                  </MarketingRoute>
-                }
-              />
-              <Route
-                path="/newsletter/confirm"
-                element={<NewsletterConfirm />}
-              />
+          <PageTransition>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                {/* Marketing */}
+                <Route
+                  path="/"
+                  element={
+                    <MarketingRoute>
+                      <Landing />
+                    </MarketingRoute>
+                  }
+                />
+                <Route path="/join" element={<JoinMeeting />} />
+                <Route path="/join/:code" element={<JoinMeeting />} />
+                <Route path="/meeting/:code" element={<MeetingRoom />} />
+                <Route path="/demo" element={<Demo />} />
+                <Route
+                  path="/about"
+                  element={
+                    <MarketingRoute title="About — Standor">
+                      <About />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/features"
+                  element={
+                    <SectionRoute
+                      sectionId="features"
+                      title="Features — Standor"
+                    />
+                  }
+                />
+                <Route
+                  path="/contact"
+                  element={
+                    <SectionRoute
+                      sectionId="footer"
+                      title="Contact — Standor"
+                    />
+                  }
+                />
+                <Route
+                  path="/how-it-works"
+                  element={
+                    <MarketingRoute title="How It Works — Standor">
+                      <HowItWorks />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/code"
+                  element={
+                    <MarketingRoute title="Code — Standor">
+                      <CodePage />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/benefits"
+                  element={
+                    <MarketingRoute title="Benefits — Standor">
+                      <Benefits />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/use-cases"
+                  element={
+                    <MarketingRoute title="Use Cases — Standor">
+                      <UseCases />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/customers"
+                  element={
+                    <MarketingRoute title="Customers — Standor">
+                      <Customers />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/faq"
+                  element={
+                    <MarketingRoute title="FAQ — Standor">
+                      <FAQ />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/docs"
+                  element={
+                    <MarketingRoute title="Documentation — Standor">
+                      <Docs />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/docs/*"
+                  element={<Navigate to="/docs" replace />}
+                />
+                <Route
+                  path="/developers"
+                  element={
+                    <MarketingRoute title="API & SDKs — Standor">
+                      <ApiSdks />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/integrations"
+                  element={
+                    <MarketingRoute title="Integrations — Standor">
+                      <Integrations />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/privacy"
+                  element={
+                    <MarketingRoute title="Privacy Policy — Standor">
+                      <Privacy />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/terms"
+                  element={
+                    <MarketingRoute title="Terms of Service — Standor">
+                      <Terms />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/system-status"
+                  element={
+                    <MarketingRoute title="Status — Standor">
+                      <Status />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/status"
+                  element={
+                    <MarketingRoute title="Status — Standor">
+                      <Status />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/accessibility"
+                  element={
+                    <MarketingRoute title="Accessibility — Standor">
+                      <AccessibilityPage />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/security"
+                  element={
+                    <MarketingRoute title="Security — Standor">
+                      <Security />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/roi"
+                  element={
+                    <MarketingRoute title="ROI Calculator — Standor">
+                      <ROICalculator />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/gallery"
+                  element={
+                    <MarketingRoute title="Product Gallery — Standor">
+                      <Gallery />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/legal"
+                  element={
+                    <MarketingRoute title="Legal — Standor">
+                      <Legal />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/privacy-data"
+                  element={
+                    <MarketingRoute title="Privacy & Data Handling — Standor">
+                      <PrivacyData />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/training"
+                  element={
+                    <MarketingRoute title="Security Training — Standor">
+                      <Training />
+                    </MarketingRoute>
+                  }
+                />
+                <Route
+                  path="/newsletter/confirm"
+                  element={<NewsletterConfirm />}
+                />
 
-              {/* Auth */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/verify-email" element={<VerifyEmail />} />
-              <Route path="/auth/magic" element={<AuthMagic />} />
-              <Route path="/org/accept-invite" element={<OrgAcceptInvite />} />
-              <Route path="/shared/:token" element={<SharedSession />} />
+                {/* Auth */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/verify-email" element={<VerifyEmail />} />
+                <Route path="/auth/magic" element={<AuthMagic />} />
+                <Route
+                  path="/org/accept-invite"
+                  element={<OrgAcceptInvite />}
+                />
+                <Route path="/shared/:token" element={<SharedSession />} />
 
-              {/* Protected App */}
-              <Route
-                path="/tools"
-                element={<Navigate to="/tools/dpi" replace />}
-              />
-              <Route
-                path="/tools/dpi"
-                element={
-                  <ProtectedRoute>
-                    <DpiTools />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/tools/*"
-                element={<Navigate to="/tools/dpi" replace />}
-              />
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/codepair/:roomId" element={<CodePairPage />} />
-              <Route
-                path="/create-session"
-                element={
-                  <ProtectedRoute>
-                    <CreateSession />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/problems"
-                element={
-                  <ProtectedRoute>
-                    <Problems />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/session"
-                element={
-                  <ProtectedRoute>
-                    <SessionView />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/session/:id"
-                element={
-                  <ProtectedRoute>
-                    <SessionView />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/replay/:id"
-                element={
-                  <ProtectedRoute>
-                    <Replay />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/lobby/:roomId"
-                element={
-                  <ProtectedRoute>
-                    <Lobby />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/upload"
-                element={
-                  <ProtectedRoute>
-                    <Upload />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/settings"
-                element={
-                  <ProtectedRoute>
-                    <Settings />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/team-rooms"
-                element={
-                  <ProtectedRoute>
-                    <TeamRoom />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/rules"
-                element={
-                  <ProtectedRoute>
-                    <Rules />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/webhooks"
-                element={
-                  <ProtectedRoute>
-                    <Webhooks />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute>
-                    <Admin />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Protected App */}
+                <Route
+                  path="/tools"
+                  element={<Navigate to="/tools/dpi" replace />}
+                />
+                <Route
+                  path="/tools/dpi"
+                  element={
+                    <ProtectedRoute>
+                      <DpiTools />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/tools/*"
+                  element={<Navigate to="/tools/dpi" replace />}
+                />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/codepair/:roomId" element={<CodePairPage />} />
+                <Route
+                  path="/create-session"
+                  element={
+                    <ProtectedRoute>
+                      <CreateSession />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/features/ai-analysis"
+                  element={
+                    <ProtectedRoute>
+                      <AiAnalysisFeature />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/problems"
+                  element={
+                    <ProtectedRoute>
+                      <Problems />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/session"
+                  element={
+                    <ProtectedRoute>
+                      <SessionView />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/session/:id"
+                  element={
+                    <ProtectedRoute>
+                      <SessionView />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/replay/:id"
+                  element={
+                    <ProtectedRoute>
+                      <Replay />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/lobby/:roomId"
+                  element={
+                    <ProtectedRoute>
+                      <Lobby />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/upload"
+                  element={
+                    <ProtectedRoute>
+                      <Upload />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute>
+                      <Settings />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/team-rooms"
+                  element={
+                    <ProtectedRoute>
+                      <TeamRoom />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/rules"
+                  element={
+                    <ProtectedRoute>
+                      <Rules />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/webhooks"
+                  element={
+                    <ProtectedRoute>
+                      <Webhooks />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute>
+                      <Admin />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </PageTransition>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </PageTransition>
         )}
         {!isAuthPage && !isFullScreenRoute && <Footer />}
       </div>

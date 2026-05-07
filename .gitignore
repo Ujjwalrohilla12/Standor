@@ -1,11 +1,19 @@
 node_modules
 .env
 .env.local
+.env.*.local
+*.env
 dist
 .next
 .DS_Store
 .vscode
 *.pdf
+*.log
+
+# Frontend build/test outputs (never commit)
+app/frontend/build/
+app/frontend/test-results/
+app/frontend/playwright-report/
 
 # Docs — local only
 DEPLOYMENT.md

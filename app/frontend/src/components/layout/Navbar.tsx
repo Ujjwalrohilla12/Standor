@@ -7,13 +7,11 @@ import useStore from "../../store/useStore";
 import StandorLogo from "../StandorLogo";
 
 const MARKETING_LINKS = [
-  { label: "About", href: "/#about", section: "about" },
-  { label: "Features", href: "/#features", section: "features" },
-  { label: "Contact", href: "/#footer", section: "footer" },
+  { label: "About", href: "/about" },
+  { label: "Features", href: "/features" },
+  { label: "Contact", href: "/contact" },
   { label: "Docs", href: "/docs" },
 ];
-
-const SECTION_SCROLL_OFFSET = 56;
 
 export function Navbar() {
   const navigate = useNavigate();
@@ -22,53 +20,6 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-
-  const handleNavClick = (
-    e: React.MouseEvent<HTMLAnchorElement>,
-    link: (typeof MARKETING_LINKS)[0],
-  ) => {
-    if (link.section) {
-      e.preventDefault();
-      if (location.pathname !== "/") {
-        // Navigate to home and store the target section in sessionStorage
-        sessionStorage.setItem("scrollToSection", link.section);
-        navigate("/");
-      } else {
-        const element = document.getElementById(link.section);
-        if (element) {
-          const offset = SECTION_SCROLL_OFFSET;
-          const elementPosition = element.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - offset;
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth",
-          });
-        }
-      }
-      setMobileOpen(false);
-    }
-  };
-
-  // Handle scrolling to section after navigation
-  useEffect(() => {
-    const scrollToSection = sessionStorage.getItem("scrollToSection");
-    if (scrollToSection && location.pathname === "/") {
-      sessionStorage.removeItem("scrollToSection");
-      // Wait for page to render
-      setTimeout(() => {
-        const element = document.getElementById(scrollToSection);
-        if (element) {
-          const offset = SECTION_SCROLL_OFFSET;
-          const elementPosition = element.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - offset;
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth",
-          });
-        }
-      }, 300);
-    }
-  }, [location.pathname]);
 
   const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -122,10 +73,9 @@ export function Navbar() {
   const isPathActive = (path: string) =>
     location.pathname === path || location.pathname.startsWith(`${path}/`);
 
-  const isMarketingLinkActive = (link: (typeof MARKETING_LINKS)[0]) => {
-    if (link.section) return location.pathname === "/";
-    return location.pathname === link.href;
-  };
+  const isMarketingLinkActive = (link: (typeof MARKETING_LINKS)[0]) =>
+    location.pathname === link.href ||
+    location.pathname.startsWith(`${link.href}/`);
 
   // ─── APP NAVBAR (Slightly more functional, less marketing-heavy) ───
   if (isAppRoute) {
@@ -239,7 +189,7 @@ export function Navbar() {
         </Link>
 
         {/* Central Pill */}
-        <div className="hidden md:flex items-center bg-[rgba(10,10,10,0.7)] backdrop-blur-xl border border-white/10 px-6 py-2 rounded-full pointer-events-auto shadow-2xl">
+        <div className="hidden md:flex items-center bg-[rgba(10,10,10,0.68)] backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full pointer-events-auto shadow-[0_16px_40px_rgba(0,0,0,0.22)]">
           <div className="flex items-center gap-1">
             {MARKETING_LINKS.map((link) => {
               const active = isMarketingLinkActive(link);
@@ -247,17 +197,17 @@ export function Navbar() {
                 <Link
                   key={link.label}
                   to={link.href}
-                  onClick={(e) => handleNavClick(e, link)}
+                  onClick={() => setMobileOpen(false)}
                   className={cn(
                     "relative px-4 py-2 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors",
-                    active ? "text-white" : "text-neutral-500 hover:text-white",
+                    active ? "text-white hover:text-white" : "text-white/88 hover:text-white",
                   )}
                 >
                   <span className="relative z-10">{link.label}</span>
                   {active && (
                     <motion.div
                       layoutId="active-pill"
-                      className="absolute inset-0 bg-white/5 rounded-full"
+                      className="absolute inset-0 bg-white/7 rounded-full"
                       transition={{
                         type: "spring",
                         bounce: 0.2,
@@ -276,7 +226,7 @@ export function Navbar() {
           {isLoggedIn ? (
             <Link
               to="/dashboard"
-              className="px-6 py-2.5 bg-white text-black rounded-full text-[11px] font-bold hover:bg-neutral-100 transition-all flex items-center gap-2 active:scale-95"
+              className="px-6 py-2.5 bg-white text-black rounded-full text-[11px] font-bold hover:bg-neutral-100 transition-all flex items-center gap-2 active:scale-95 shadow-[0_10px_24px_rgba(255,255,255,0.08)]"
             >
               Dashboard <ArrowRight size={14} />
             </Link>
@@ -286,7 +236,7 @@ export function Navbar() {
                 to="/login"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[11px] font-bold text-neutral-400 hover:text-white transition-colors uppercase tracking-widest px-2"
+                className="px-5 py-2.5 rounded-full text-[11px] font-bold text-white/90 hover:text-white transition-colors uppercase tracking-widest border border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"
               >
                 Log in
               </Link>
@@ -294,7 +244,7 @@ export function Navbar() {
                 to="/register"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-6 py-2.5 bg-white text-black rounded-full text-[11px] font-bold hover:bg-neutral-100 transition-all flex items-center gap-2 active:scale-95"
+                className="px-6 py-2.5 bg-white text-black rounded-full text-[11px] font-bold hover:bg-neutral-100 transition-all flex items-center gap-2 active:scale-95 shadow-[0_10px_24px_rgba(255,255,255,0.08)]"
               >
                 Get Started <ArrowRight size={14} />
               </Link>
@@ -324,12 +274,12 @@ export function Navbar() {
               <Link
                 key={link.label}
                 to={link.href}
-                onClick={(e) => handleNavClick(e, link)}
+                onClick={() => setMobileOpen(false)}
                 className={cn(
                   "text-2xl font-bold transition-colors",
-                  location.pathname === link.href
-                    ? "text-white"
-                    : "text-neutral-600 hover:text-white",
+                  isMarketingLinkActive(link)
+                    ? "text-white hover:text-white"
+                    : "text-white/88 hover:text-white",
                 )}
               >
                 {link.label}
@@ -351,7 +301,7 @@ export function Navbar() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileOpen(false)}
-                  className="text-xl font-bold text-white"
+                  className="px-6 py-3 rounded-full text-xl font-bold text-white border border-white/10 bg-white/[0.04]"
                 >
                   Log in
                 </Link>
@@ -360,7 +310,7 @@ export function Navbar() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileOpen(false)}
-                  className="px-8 py-3 bg-white text-black rounded-full font-bold text-lg"
+                  className="px-8 py-3 bg-white text-black rounded-full font-bold text-lg shadow-[0_12px_28px_rgba(255,255,255,0.08)]"
                 >
                   Get Started
                 </Link>

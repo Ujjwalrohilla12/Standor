@@ -10,23 +10,33 @@ import { verifyGoogleToken, getGoogleAuthUrl, verifyGoogleCode } from "../lib/go
 import { logAuditEvent } from "../lib/auditLogger.js";
 
 export const googleAuthRedirect = async (req, res) => {
-    const url = getGoogleAuthUrl();
+    const flow = req.query.flow === "register" ? "register" : "login";
+    const url = getGoogleAuthUrl(flow);
     res.redirect(url);
 };
 
 export const googleAuthCallback = async (req, res) => {
-    const { code } = req.query;
+    const { code, state } = req.query;
+    const flow = state === "register" ? "register" : "login";
+    const redirectPath = flow === "register" ? "/register" : "/login";
+
+    console.log('[googleAuthCallback] incoming query:', req.query);
+    console.log('[googleAuthCallback] flow:', flow, 'redirectPath:', redirectPath);
 
     if (!code) {
-        return res.status(400).send("Code not provided");
+        console.warn('[googleAuthCallback] no code provided in callback');
+        return res.redirect(`${ENV.CLIENT_URL}${redirectPath}?error=google_oauth_failed`);
     }
 
     try {
+        console.log('[googleAuthCallback] exchanging code for tokens...');
         const payload = await verifyGoogleCode(code);
 
         if (!payload) {
+            console.warn('[googleAuthCallback] verifyGoogleCode returned no payload');
             return res.status(401).send("Invalid Google code");
         }
+        console.log('[googleAuthCallback] google payload received for email:', payload.email);
 
         const { sub: googleId, email, name, picture: profileImage } = payload;
 
@@ -62,10 +72,10 @@ export const googleAuthCallback = async (req, res) => {
 
         await logAuditEvent({ req, userId: user._id, action: "login", metadata: { method: "google_oauth" }});
 
-        res.redirect(`${ENV.CLIENT_URL}/login?token=${token}`);
+        res.redirect(`${ENV.CLIENT_URL}${redirectPath}?token=${token}`);
     } catch (error) {
         console.error("Error in googleAuthCallback controller:", error);
-        res.status(500).send("Internal Server Error");
+        res.redirect(`${ENV.CLIENT_URL}${redirectPath}?error=google_oauth_failed`);
     }
 };
 

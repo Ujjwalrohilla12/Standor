@@ -10,11 +10,12 @@ const client = new OAuth2Client({
 // We'll use a simpler approach: the frontend should use GIS to get an idToken
 // But since the user wants to keep the existing frontend (mostly), I'll implement both.
 
-export const getGoogleAuthUrl = () => {
+export const getGoogleAuthUrl = (state = "login") => {
     const url = client.generateAuthUrl({
         access_type: "offline",
         scope: ["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"],
         redirect_uri: ENV.GOOGLE_CALLBACK_URL,
+        state,
     });
     console.log("Generated Google Auth URL:", url);
     return url;

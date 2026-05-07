@@ -8,15 +8,15 @@
   --ns-bg-700: #141B24;
   --ns-bg-600: #1C2633;
 
-  --ns-surface-500: #3A3A3C;
-  --ns-surface-400: #48484A;
-  --ns-surface-300: #636366;
+  --ns-surface-500: #232327;
+  --ns-surface-400: #2f3034;
+  --ns-surface-300: #3b3d42;
 
-  --ns-grey-500: #8E8E93;
-  --ns-grey-400: #AEAEB2;
-  --ns-grey-300: #C7C7CC;
-  --ns-grey-200: #D1D1D6;
-  --ns-grey-100: #E5E5EA;
+  --ns-grey-500: #44474d;
+  --ns-grey-400: #35383d;
+  --ns-grey-300: #2a2d32;
+  --ns-grey-200: #1f2125;
+  --ns-grey-100: #151618;
 
   --ns-white: #FFFFFF;
   --ns-off-white: #F2F2F7;
@@ -41,9 +41,9 @@
   --ns-border-hover: rgba(255, 255, 255, 0.16);
 
   --ns-text-primary: var(--ns-white);
-  --ns-text-secondary: var(--ns-grey-300);
+  --ns-text-secondary: var(--ns-grey-400);
   --ns-text-muted: var(--ns-grey-500);
-  --ns-text-disabled: var(--ns-grey-700);
+  --ns-text-disabled: #1a1c1f;
 
   /* Glass — used only for elevated UI (L2): modals, nav, CTA, feature cards */
   --ns-glass: rgba(18, 22, 28, 0.7);

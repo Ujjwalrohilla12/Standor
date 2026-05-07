@@ -87,3 +87,14 @@ const startServer = async () => {
 };
 
 startServer();
+
+// Global error handling to avoid silent exits and aid debugging
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception thrown:', err);
+  // It's safer to exit on uncaught exceptions in many apps, but for local
+  // dev we log and keep the process alive so we can inspect the state.
+});
