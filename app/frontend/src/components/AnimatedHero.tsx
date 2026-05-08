@@ -5,6 +5,7 @@ const LoginCrystal3D = lazy(() => import('./3d/LoginCrystal3D'));
 const RegisterHelix3D = lazy(() => import('./3d/RegisterHelix3D'));
 const AboutOrbit3D = lazy(() => import('./3d/AboutOrbit3D'));
 const SignUpPortal3D = lazy(() => import('./3d/SignUpPortal3D'));
+const BoxyHumanoid3D = lazy(() => import('./3d/BoxyHumanoid3D'));
 
 // Fallback while lazy-loading the 3D scene
 function SceneFallback() {
@@ -18,7 +19,7 @@ function SceneFallback() {
   );
 }
 
-export type AnimatedHeroVariant = 'default' | 'auth' | 'login' | 'register' | 'signup' | 'about';
+export type AnimatedHeroVariant = 'default' | 'auth' | 'login' | 'register' | 'signup' | 'about' | 'humanoid';
 
 interface AnimatedHeroProps {
   className?: string;
@@ -30,10 +31,11 @@ interface AnimatedHeroProps {
  * AnimatedHero — renders a unique 3D animated scene per variant.
  *
  * Variants:
- *   - 'login' | 'auth' | 'default' → Crystalline rotating icosahedron (security/lock)
- *   - 'register'                    → DNA double-helix (growth/creation)
- *   - 'about'                       → Orbiting knowledge-node network (connections)
- *   - 'signup'                      → Geometric torus-knot portal (gateway/journey)
+ *   - 'login'     → BoxyHumanoid robot (professional, moving)
+ *   - 'register'  → BoxyHumanoid robot (professional, moving)
+ *   - 'about'     → BoxyHumanoid robot (professional, moving)
+ *   - 'signup'    → Geometric torus-knot portal (gateway/journey)
+ *   - 'auth' | 'default' → BoxyHumanoid robot
  */
 export default function AnimatedHero({ className = '', variant = 'default', sceneProps }: AnimatedHeroProps) {
   return (
@@ -49,17 +51,19 @@ export default function AnimatedHero({ className = '', variant = 'default', scen
           {(() => {
             switch (variant) {
               case 'register':
-                return <RegisterHelix3D className={className} {...sceneProps} />;
+                return <BoxyHumanoid3D className={className} tone="register" {...sceneProps} />;
               case 'about':
-                return <AboutOrbit3D className={className} {...sceneProps} />;
+                return <BoxyHumanoid3D className={className} tone="about" {...sceneProps} />;
               case 'signup':
                 return <SignUpPortal3D className={className} {...sceneProps} />;
               case 'login':
-                return <LoginCrystal3D className={className} {...sceneProps} />;
+                return <BoxyHumanoid3D className={className} tone="login" {...sceneProps} />;
+              case 'humanoid':
+                return <BoxyHumanoid3D className={className} tone="login" {...sceneProps} />;
               case 'auth':
               case 'default':
               default:
-                return <LoginCrystal3D className={className} {...sceneProps} />;
+                return <BoxyHumanoid3D className={className} tone="login" {...sceneProps} />;
             }
           })()}
         </motion.div>

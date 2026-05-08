@@ -255,7 +255,7 @@ export const MediaProvider: React.FC<{ socket: Socket | null; children: React.Re
             // Drain any ICE candidates that arrived before the remote description
             const buffered = pendingCandidates.current.get(from) || [];
             for (const c of buffered) {
-                try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch {}
+                try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch { /* ignore invalid ICE */ }
             }
             pendingCandidates.current.delete(from);
 
@@ -277,7 +277,7 @@ export const MediaProvider: React.FC<{ socket: Socket | null; children: React.Re
                 // Drain any ICE candidates buffered before setRemoteDescription
                 const buffered = pendingCandidates.current.get(from) || [];
                 for (const c of buffered) {
-                    try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch {}
+                    try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch { /* ignore invalid ICE */ }
                 }
                 pendingCandidates.current.delete(from);
             }
@@ -288,7 +288,7 @@ export const MediaProvider: React.FC<{ socket: Socket | null; children: React.Re
             const pc = peerConnections.current.get(from);
             if (pc) {
                 if (pc.remoteDescription) {
-                    try { await pc.addIceCandidate(new RTCIceCandidate(candidate)); } catch {}
+                    try { await pc.addIceCandidate(new RTCIceCandidate(candidate)); } catch { /* ignore invalid ICE */ }
                 } else {
                     // Buffer until remote description is set
                     const arr = pendingCandidates.current.get(from) || [];

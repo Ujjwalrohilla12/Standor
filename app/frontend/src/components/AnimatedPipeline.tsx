@@ -21,7 +21,6 @@ export default function AnimatedPipeline() {
         if (!isInView) return;
 
         let cancelled = false;
-        let frame = 0;
 
         const run = async () => {
             const stageDelay = CYCLE_DURATION / STAGES.length;

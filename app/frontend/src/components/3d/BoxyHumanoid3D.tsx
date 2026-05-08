@@ -78,7 +78,7 @@ function BoxyHumanoid({ tone }: { tone: Tone }) {
       <group ref={torsoRef}>
         {/* Torso */}
         <RoundedBox args={[1.1, 1.35, 0.55]} radius={0.12} smoothness={4}>
-          <meshStandardMaterial color="#0b1020" roughness={0.45} metalness={0.6} />
+          <meshStandardMaterial color="#f5f7fa" roughness={0.45} metalness={0.6} />
         </RoundedBox>
 
         {/* Chest plate */}
@@ -90,20 +90,20 @@ function BoxyHumanoid({ tone }: { tone: Tone }) {
         {/* Neck */}
         <mesh position={[0, 0.78, 0.02]}>
           <boxGeometry args={[0.25, 0.16, 0.25]} />
-          <meshStandardMaterial color="#0b1020" roughness={0.5} metalness={0.55} />
+          <meshStandardMaterial color="#f5f7fa" roughness={0.5} metalness={0.55} />
         </mesh>
 
         {/* Head (no face/eyes — plain block) */}
         <mesh ref={headRef} position={[0, 1.15, 0.02]}>
           <boxGeometry args={[0.62, 0.62, 0.62]} />
-          <meshStandardMaterial color="#0a0f1b" roughness={0.5} metalness={0.7} />
+          <meshStandardMaterial color="#f5f7fa" roughness={0.5} metalness={0.7} />
         </mesh>
 
         {/* Arms (hinged groups for swing) */}
         <group ref={leftArmRef} position={[-0.72, 0.42, 0]}>
           <mesh position={[0, -0.35, 0]}>
             <boxGeometry args={[0.28, 0.9, 0.28]} />
-            <meshStandardMaterial color="#0b1020" roughness={0.5} metalness={0.55} />
+            <meshStandardMaterial color="#f5f7fa" roughness={0.5} metalness={0.55} />
           </mesh>
           <mesh position={[0, -0.88, 0.06]}>
             <boxGeometry args={[0.3, 0.22, 0.36]} />
@@ -113,7 +113,7 @@ function BoxyHumanoid({ tone }: { tone: Tone }) {
         <group ref={rightArmRef} position={[0.72, 0.42, 0]}>
           <mesh position={[0, -0.35, 0]}>
             <boxGeometry args={[0.28, 0.9, 0.28]} />
-            <meshStandardMaterial color="#0b1020" roughness={0.5} metalness={0.55} />
+            <meshStandardMaterial color="#f5f7fa" roughness={0.5} metalness={0.55} />
           </mesh>
           <mesh position={[0, -0.88, 0.06]}>
             <boxGeometry args={[0.3, 0.22, 0.36]} />
@@ -124,28 +124,28 @@ function BoxyHumanoid({ tone }: { tone: Tone }) {
         {/* Hips */}
         <mesh position={[0, -0.68, 0]}>
           <boxGeometry args={[0.78, 0.35, 0.5]} />
-          <meshStandardMaterial color="#0b1020" roughness={0.55} metalness={0.55} />
+          <meshStandardMaterial color="#f5f7fa" roughness={0.55} metalness={0.55} />
         </mesh>
 
         {/* Legs (hinged groups for walk cycle) */}
         <group ref={leftLegRef} position={[-0.25, -0.86, 0]}>
           <mesh position={[0, -0.45, 0]}>
             <boxGeometry args={[0.3, 1.0, 0.32]} />
-            <meshStandardMaterial color="#0b1020" roughness={0.55} metalness={0.5} />
+            <meshStandardMaterial color="#f5f7fa" roughness={0.55} metalness={0.5} />
           </mesh>
           <mesh position={[0, -1.05, 0.12]}>
             <boxGeometry args={[0.42, 0.18, 0.7]} />
-            <meshStandardMaterial color="#0a0f1b" roughness={0.6} metalness={0.35} />
+            <meshStandardMaterial color="#f5f7fa" roughness={0.6} metalness={0.35} />
           </mesh>
         </group>
         <group ref={rightLegRef} position={[0.25, -0.86, 0]}>
           <mesh position={[0, -0.45, 0]}>
             <boxGeometry args={[0.3, 1.0, 0.32]} />
-            <meshStandardMaterial color="#0b1020" roughness={0.55} metalness={0.5} />
+            <meshStandardMaterial color="#f5f7fa" roughness={0.55} metalness={0.5} />
           </mesh>
           <mesh position={[0, -1.05, 0.12]}>
             <boxGeometry args={[0.42, 0.18, 0.7]} />
-            <meshStandardMaterial color="#0a0f1b" roughness={0.6} metalness={0.35} />
+            <meshStandardMaterial color="#f5f7fa" roughness={0.6} metalness={0.35} />
           </mesh>
         </group>
       </group>

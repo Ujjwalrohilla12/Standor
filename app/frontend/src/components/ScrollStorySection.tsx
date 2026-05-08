@@ -70,15 +70,14 @@ function NetworkViz({ activeNodes, activeEdges, packetColor }: {
 
     useEffect(() => {
         setPackets([]);
-        let id: ReturnType<typeof setInterval>;
         const spawn = () => {
             if (activeEdges.length === 0) return;
             const edgeIdx = activeEdges[Math.floor(Math.random() * activeEdges.length)];
             setPackets(prev => [...prev.slice(-6), { id: dotId++, edgeIdx, progress: 0, color: packetColor }]);
         };
         spawn();
-        id = setInterval(spawn, 900);
-        return () => clearInterval(id);
+        const intervalId = setInterval(spawn, 900);
+        return () => clearInterval(intervalId);
     }, [activeEdges.join(','), packetColor]);
 
     useEffect(() => {
