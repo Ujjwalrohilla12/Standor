@@ -1,17 +1,10 @@
-// @ts-nocheck
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useRef, Suspense, useCallback, useMemo } from 'react';
 import useStore from '../../store/useStore';
 import { osiLayers } from '../../utils/mockData';
-
-let Canvas, useFrame, OrbitControls, THREE;
-try {
-  Canvas = require('@react-three/fiber').Canvas;
-  useFrame = require('@react-three/fiber').useFrame;
-  OrbitControls = require('@react-three/drei').OrbitControls;
-  THREE = require('three');
-} catch (e) {
-  console.warn('R3F not available');
-}
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
+import * as THREE from 'three';
 
 function LayerBox({ layer, index, total, isSelected, isHovered, onSelect, onHover }: any) {
   const meshRef = useRef();
