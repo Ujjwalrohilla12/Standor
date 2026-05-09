@@ -38,3 +38,5 @@ app/PRD.txt
 app/Prompt.txt
 app/techStack.txt
 app/file.txt
+!app/frontend/package-lock.json
+!app/backend/package-lock.json
