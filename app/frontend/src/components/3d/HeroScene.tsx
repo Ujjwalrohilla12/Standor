@@ -67,28 +67,9 @@ function HaloRing({ radius = 2.8, tilt = 0, opacity = 0.12, color = '#137fec', r
     useFrame((state) => { if (lineRef.current) lineRef.current.rotation.y = state.clock.getElapsedTime() * rotSpeed; });
     return (
         <group rotation={[tilt, 0, 0]}>
-            {/* @ts-ignore: TSX intrinsic 'line' typed as SVG; this is a react-three-fiber element */}
+            {/* @ts-expect-error: TSX intrinsic 'line' typed as SVG; this is a react-three-fiber element */}
             <line ref={lineRef as any} geometry={geo as any}><lineBasicMaterial color={color} transparent opacity={opacity} /></line>
         </group>
-    );
-}
-
-function Starfield({ count = 900 }) {
-    const ref = useRef(null);
-    const positions = useMemo(() => {
-        const pos = new Float32Array(count * 3);
-        for (let i = 0; i < count; i++) {
-            pos[i * 3] = (Math.random() - 0.5) * 16;
-            pos[i * 3 + 1] = (Math.random() - 0.5) * 16;
-            pos[i * 3 + 2] = (Math.random() - 0.5) * 16;
-        }
-        return pos;
-    }, [count]);
-    useFrame((state) => { if (ref.current) ref.current.rotation.y = state.clock.getElapsedTime() * 0.008; });
-    return (
-        <Points ref={ref} positions={positions} stride={3} frustumCulled={false}>
-            <PointMaterial transparent color="#ffffff" size={0.007} sizeAttenuation depthWrite={false} opacity={0.35} blending={THREE.AdditiveBlending} />
-        </Points>
     );
 }
 

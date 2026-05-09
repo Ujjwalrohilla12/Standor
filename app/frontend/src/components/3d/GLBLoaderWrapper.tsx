@@ -24,7 +24,7 @@ function GLTFViewer({ path, onGLTF }: { path: string; onGLTF?: (gltf: any) => vo
   const gltf = useGLTF(path);
   // notify parent that glTF loaded (mixer/animations can be accessed)
   if (onGLTF) {
-    try { onGLTF(gltf); } catch (e) { /* ignore */ }
+    try { onGLTF(gltf); } catch (_e) { /* ignore */ }
   }
   return <primitive object={(gltf as any).scene} dispose={null} />;
 }

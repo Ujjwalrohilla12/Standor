@@ -8,8 +8,6 @@ const NODES = [
     { id: 4, label: 'Forensic Index', sub: 'Hash + metadata', color: '#FF9F0A', x: 50, y: 82 },
 ];
 
-const EDGES = [[0, 1], [1, 2], [2, 3], [3, 4]];
-
 export default function ArchitectureDiagram() {
     return (
         <div className="relative w-full">

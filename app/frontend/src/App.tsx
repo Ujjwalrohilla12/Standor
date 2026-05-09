@@ -213,11 +213,6 @@ function SectionRoute({
 function AppContent() {
   const location = useLocation();
   const isAuthPage = authRoutes.includes(location.pathname);
-  const isMarketingPage =
-    marketingRoutes.includes(location.pathname) ||
-    location.pathname === "/" ||
-    isDocsSubpath(location.pathname) ||
-    isNewsletterConfirm(location.pathname);
 
   // Demo runs as a standalone full-screen route, no global nav/footer
   const isDemoRoute = location.pathname === "/demo";

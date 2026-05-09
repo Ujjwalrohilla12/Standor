@@ -1,9 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
-const LoginCrystal3D = lazy(() => import('./3d/LoginCrystal3D'));
-const RegisterHelix3D = lazy(() => import('./3d/RegisterHelix3D'));
-const AboutOrbit3D = lazy(() => import('./3d/AboutOrbit3D'));
 const SignUpPortal3D = lazy(() => import('./3d/SignUpPortal3D'));
 const BoxyHumanoid3D = lazy(() => import('./3d/BoxyHumanoid3D'));
 

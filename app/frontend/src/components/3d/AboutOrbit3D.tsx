@@ -169,7 +169,7 @@ export default function AboutOrbit3D({ className = '' }: { className?: string })
               <AboutCore />
             </Float>
 
-            {modules.map((module, index) => (
+            {modules.map((module, _index) => (
               <AboutModule key={module.label} {...module} />
             ))}
 
