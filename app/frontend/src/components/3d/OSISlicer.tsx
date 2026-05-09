@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useRef, Suspense, useCallback, useMemo } from 'react';
+import { Mesh, Group } from 'three';
 import useStore from '../../store/useStore';
 import { osiLayers } from '../../utils/mockData';
 import { Canvas, useFrame } from '@react-three/fiber';
@@ -7,7 +8,7 @@ import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
 function LayerBox({ layer, index, total, isSelected, isHovered, onSelect, onHover }: any) {
-  const meshRef = useRef();
+  const meshRef = useRef<Mesh | null>(null);
   const yPos = (total - index - 1) * 0.7 - (total * 0.7) / 2;
   const brightness = 0.12 + (index / total) * 0.3;
 
@@ -41,7 +42,7 @@ function LayerBox({ layer, index, total, isSelected, isHovered, onSelect, onHove
 function OSIStack() {
   const { selectedLayer, setSelectedLayer } = useStore();
   const [hoveredLayer, setHoveredLayer] = useState<any>(null);
-  const groupRef = useRef();
+  const groupRef = useRef<Group | null>(null);
 
   useFrame((state) => {
     if (groupRef.current) {

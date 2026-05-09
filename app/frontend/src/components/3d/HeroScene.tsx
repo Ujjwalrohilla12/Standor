@@ -55,7 +55,7 @@ function SessionNode({ radius, angle, speed, yOffset, color }) {
 }
 
 function HaloRing({ radius = 2.8, tilt = 0, opacity = 0.12, color = '#137fec', rotSpeed = 0.04 }) {
-    const lineRef = useRef(null);
+    const lineRef = useRef<THREE.Line | null>(null);
     const geo = useMemo(() => {
         const pts = [];
         for (let i = 0; i <= 128; i++) {
@@ -67,7 +67,8 @@ function HaloRing({ radius = 2.8, tilt = 0, opacity = 0.12, color = '#137fec', r
     useFrame((state) => { if (lineRef.current) lineRef.current.rotation.y = state.clock.getElapsedTime() * rotSpeed; });
     return (
         <group rotation={[tilt, 0, 0]}>
-            <line ref={lineRef} geometry={geo}><lineBasicMaterial color={color} transparent opacity={opacity} /></line>
+            {/* @ts-ignore: TSX intrinsic 'line' typed as SVG; this is a react-three-fiber element */}
+            <line ref={lineRef as any} geometry={geo as any}><lineBasicMaterial color={color} transparent opacity={opacity} /></line>
         </group>
     );
 }
